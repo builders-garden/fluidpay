@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={raleway.className}>
         <Providers>
-          <main className="max-w-sm mx-auto border-x w-full h-screen border-[#232324] px-4">
+          <main className="max-w-[430px] mx-auto border-x w-full h-screen border-[#232324]">
             {children}
           </main>
         </Providers>
