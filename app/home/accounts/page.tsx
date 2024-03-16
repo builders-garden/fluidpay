@@ -18,14 +18,12 @@ function AccountsPage() {
   const { smartAccountList } = useGetUserSmartAccounts();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
-  const { data, loadMore, moreDataToLoad, refetch } =
-    useGetSmartAccountTransfers({
-      idSmartAccount: mainAccount?.idSmartAccount || "",
-      chainId: base.id,
-      polling: true,
-    });
+  const { data } = useGetSmartAccountTransfers({
+    idSmartAccount: mainAccount?.idSmartAccount || "",
+    chainId: base.id,
+    polling: true,
+  });
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [balances, setBalances] = useState<any[]>([]);
   const jwt = getAuthToken();
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
@@ -162,15 +160,17 @@ function AccountsPage() {
               <p className="font-bold">Settings</p>
             </div>
           </div>
-          <Transfers
-            transfers={data.filter(
-              (transfer) =>
-                transfer.stealthSafeTransfer?.from.toLowerCase() ===
-                  selectedCard.address.toLowerCase() ||
-                transfer.stealthSafeTransfer?.to.toLowerCase() ===
-                  selectedCard.address.toLowerCase()
-            )}
-          />
+          <div className="flex flex-col space-y-2 bg-[#232324] rounded-xl p-4 mx-4 mt-12">
+            <Transfers
+              transfers={data.filter(
+                (transfer) =>
+                  transfer.stealthSafeTransfer?.from.toLowerCase() ===
+                    selectedCard.address.toLowerCase() ||
+                  transfer.stealthSafeTransfer?.to.toLowerCase() ===
+                    selectedCard.address.toLowerCase()
+              )}
+            />
+          </div>
         </div>
       </div>
     );

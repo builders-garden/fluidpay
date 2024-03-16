@@ -1,6 +1,5 @@
 "use client";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { formatUnits } from "viem";
 import {
   Avatar,
   Button,
@@ -138,7 +137,10 @@ export default function Home() {
             <p className="text-xs">Send</p>
           </div>
         </div>
-        <Transfers transfers={data || []} />
+
+        <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4">
+          <Transfers transfers={data || []} />
+        </div>
       </div>
       {/* <QrCodeModal isOpen={qrCodeModalOpen} onOpenChange={onQrCodeOpenChange} /> */}
     </>
