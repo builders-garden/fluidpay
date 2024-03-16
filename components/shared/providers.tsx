@@ -17,9 +17,10 @@ const sefuClient = new FluidkeyClient({
 });
 
 const config = createConfig({
+  // @ts-ignore
   chains: [base],
   multiInjectedProviderDiscovery: false,
-  // @ts-expect-error
+  // @ts-ignore
   transports: {
     // @ts-ignore
     [base.id]: http(),

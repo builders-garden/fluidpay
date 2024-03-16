@@ -57,11 +57,17 @@ export default function Home() {
             <Button
               variant="light"
               isIconOnly
+              radius="full"
               onPress={() => onQrCodeOpenChange()}
             >
               <QrCode />
             </Button>
-            <Button variant="light" isIconOnly>
+            <Button
+              variant="light"
+              isIconOnly
+              radius="full"
+              onPress={() => router.push("/home/accounts")}
+            >
               <CreditCard />
             </Button>
           </div>

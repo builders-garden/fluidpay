@@ -26,7 +26,7 @@ export default function Onboarding() {
   const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const initializedWalletAddress = useInitializedWalletAddress();
   const { isAddressRegistered, refetch: refetchRegistration } =
-    useIsAddressRegistered(user?.wallet as `0x${string}`);
+    useIsAddressRegistered(address);
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
 
@@ -72,9 +72,10 @@ export default function Onboarding() {
     return (
       <div className="flex flex-col p-4 space-y-4">
         <Button
-          variant="ghost"
+          variant="light"
           className="w-min"
           isIconOnly
+          radius="full"
           onPress={() => {
             disconnect();
             router.push("/");
@@ -82,7 +83,7 @@ export default function Onboarding() {
         >
           <ArrowLeft />
         </Button>
-        <h1 className="text-4xl font-bold">Onboarding</h1>
+        <h1 className="text-2xl font-bold">Onboarding</h1>
         <p>
           Welcome to <span className="font-bold">fluidkey</span>! Complete the
           onboarding by following the instructions on your device.
@@ -95,9 +96,10 @@ export default function Onboarding() {
   return (
     <div className="flex flex-col p-4 space-y-4">
       <Button
-        variant="ghost"
+        variant="light"
         className="w-min"
         isIconOnly
+        radius="full"
         onPress={() => {
           disconnect();
           router.push("/");
@@ -115,6 +117,7 @@ export default function Onboarding() {
           <Button
             color="primary"
             className="font-semibold"
+            radius="full"
             isLoading={loading}
             onPress={() => generateFluidpayKeys()}
           >
@@ -133,6 +136,7 @@ export default function Onboarding() {
           <Button
             color="primary"
             className="font-semibold"
+            radius="full"
             isLoading={isLoadingRegisterUser}
             onPress={() => {
               launchRegistration();
@@ -140,6 +144,20 @@ export default function Onboarding() {
             isDisabled={inviteCode.length !== 6}
           >
             Register fluidpay user
+          </Button>
+        </>
+      )}
+      {keys && isAddressRegistered && (
+        <>
+          <Button
+            color="primary"
+            className="font-semibold"
+            radius="full"
+            onPress={() => {
+              router.push("/home");
+            }}
+          >
+            Start now!
           </Button>
         </>
       )}
