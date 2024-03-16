@@ -26,10 +26,9 @@ function SecurityCheckModal({
   onOpenChange: () => void;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const { authenticate, isAuthenticated } = useAuthenticate();
+  const { authenticate } = useAuthenticate();
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
-  const fluidkeyClient = useFluidkeyClient();
 
   const generateKeysAndAuthenticate = async () => {
     setLoading(true);

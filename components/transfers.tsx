@@ -4,7 +4,7 @@ import { SmartAccountTransferDirection } from "@sefu/react-sdk/lib/core/graphql/
 import TimeAgo from "javascript-time-ago";
 // English.
 import en from "javascript-time-ago/locale/en";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, TriangleAlert } from "lucide-react";
 TimeAgo.addDefaultLocale(en);
 
 export default function Transfers({
@@ -14,7 +14,13 @@ export default function Transfers({
 }) {
   const timeAgo = new TimeAgo("en-US");
   return (
-    <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4">
+    <>
+      {transfers.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-4 space-y-4">
+          <TriangleAlert size={32} />
+          <p>No transactions yet!</p>
+        </div>
+      )}
       {transfers.map((transfer) => (
         <div
           key={transfer.stealthSafeTransfer?.txHash}
@@ -50,6 +56,6 @@ export default function Transfers({
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
