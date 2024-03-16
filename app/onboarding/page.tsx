@@ -1,11 +1,6 @@
 "use client";
-<<<<<<< HEAD
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input, Skeleton } from "@nextui-org/react";
-=======
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { Button, Divider, Input, Skeleton } from "@nextui-org/react";
->>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
 import {
   useAuthenticate,
   useFluidkeyClient,
@@ -61,11 +56,8 @@ export default function Onboarding() {
     isError: isErrorRegisterUser,
   } = useRegisterUser();
 
-<<<<<<< HEAD
   // console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
 
-=======
->>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
   const generateFluidpayKeys = async () => {
     try {
       setLoading(true);
@@ -202,26 +194,6 @@ export default function Onboarding() {
       )}
       {keys && isAddressRegistered && (
         <>
-<<<<<<< HEAD
-          {!generatingStealthAddress && (
-            <Button
-              color="primary"
-              className="font-semibold"
-              radius="full"
-              onPress={async () => {
-                await authenticate();
-              }}
-              isLoading={isAuthenticateLoading}
-            >
-              Start now!
-            </Button>
-          )}
-          {generatingStealthAddress && (
-            <p className="animate-pulse text-center text-sm">
-              Creating fluidpay card...
-            </p>
-          )}
-=======
           <p>You&apos;re all set! Let&apos;s get started.</p>
           <Button
             color="primary"
@@ -234,7 +206,6 @@ export default function Onboarding() {
           >
             Start now!
           </Button>
->>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
         </>
       )}
     </div>
