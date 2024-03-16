@@ -8,14 +8,13 @@ import { redirect } from "next/navigation";
 import { useDisconnect, useConnect, useAccount } from "wagmi";
 
 export default function Home() {
-  const { status } = useAccount();
-  const { connectors, connect, error } = useConnect();
+  const { status, address } = useAccount();
   const { disconnect } = useDisconnect();
   const { walletConnector, isAuthenticated, isFullyConnected, user } =
     useDynamicContext();
   const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const { isAddressRegistered } = useIsAddressRegistered(
-    user?.wallet as `0x${string}`
+    address as `0x${string}`
   );
 
   console.log(user);
