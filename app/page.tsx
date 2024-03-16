@@ -3,9 +3,13 @@ import {
   DynamicConnectButton,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react-core";
-import { useGetUser, useIsAddressRegistered } from "@sefu/react-sdk";
+import {
+  useAuthenticate,
+  useGetUser,
+  useIsAddressRegistered,
+} from "@sefu/react-sdk";
 import { redirect } from "next/navigation";
-import { useDisconnect, useConnect, useAccount } from "wagmi";
+import { useDisconnect, useAccount } from "wagmi";
 
 export default function Home() {
   const { status, address } = useAccount();
@@ -21,16 +25,19 @@ export default function Home() {
   const { isAddressRegistered } = useIsAddressRegistered(
     address as `0x${string}`
   );
+  const { isAuthenticated: isFkeyAuthenticated } = useAuthenticate();
 
   console.log(authToken);
 
-  console.log(user);
+  console.log(isAddressRegistered);
 
   if (user) {
     if (user.newUser || !isAddressRegistered) {
       return redirect("/onboarding");
-    } else {
+    } else if (isAuthenticated) {
       return redirect("/home");
+    } else {
+      return redirect("/security-check");
     }
   }
 

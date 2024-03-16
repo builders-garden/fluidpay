@@ -16,7 +16,13 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount, useDisconnect, useWalletClient } from "wagmi";
+import {
+  useAccount,
+  useDisconnect,
+  usePublicClient,
+  useWalletClient,
+} from "wagmi";
+import "@/app/polyfills";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -31,6 +37,7 @@ export default function Onboarding() {
   const initializedWalletAddress = useInitializedWalletAddress();
   const { isAddressRegistered, refetch: refetchRegistration } =
     useIsAddressRegistered(address);
+  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
   const {
@@ -88,6 +95,7 @@ export default function Onboarding() {
   };
 
   useEffect(() => {
+    console.log(smartAccountList, isAuthenticated);
     if (isAuthenticated && smartAccountList && smartAccountList.length > 0)
       generateDefaultAccount();
   }, [isAuthenticated, smartAccountList]);
@@ -95,19 +103,75 @@ export default function Onboarding() {
   const generateDefaultAccount = async () => {
     try {
       setGeneratingStealthAddress(true);
-      const deployStealthResult = await fetch("/api/deploy-stealth", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const { address } = await deployStealthResult.json();
 
-      await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
+      // const vpkNode = fluidkeyClient?.generateViewingPrivateKeyNode(0);
+      // console.log(vpkNode);
+      // const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
+      //   viewingPrivateKeyNode: vpkNode!,
+      //   nonce: BigInt(0),
+      //   chainId: 8453,
+      // });
+      // const ephemeralPubKey = secp.getPublicKey(
+      //   Uint8Array.from(Buffer.from(ephemeralPrivateKey.slice(2), "hex"))
+      // );
+      // const stealthPrivateKey = fluidkeyClient?.getStealthPrivateKey(
+      //   `0x${Buffer.from(ephemeralPubKey).toString("hex")}`
+      // );
+      // const EOA = privateKeyToAccount(stealthPrivateKey!);
+
+      // // @ts-ignore
+      // const customSigner = walletClientToSmartAccountSigner(walletClient);
+      // // @ts-ignore
+      // const safeAccount = await signerToSafeSmartAccount(publicClient, {
+      //   entryPoint: ENTRYPOINT_ADDRESS_V06,
+      //   signer: customSigner,
+      //   saltNonce: BigInt(0), // optional
+      //   safeVersion: "1.4.1",
+      // });
+
+      // const smartAccountClient = createSmartAccountClient({
+      //   account: safeAccount,
+      //   entryPoint: ENTRYPOINT_ADDRESS_V06,
+      //   chain: base,
+      //   bundlerTransport: http(
+      //     `https://api.pimlico.io/v1/base/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`
+      //   ),
+      //   middleware: {
+      //     gasPrice: async () =>
+      //       (await bundlerClient.getUserOperationGasPrice()).fast, // use pimlico bundler to get gas prices
+      //     sponsorUserOperation: paymasterClient.sponsorUserOperation, // optional
+      //   },
+      // });
+      // console.log(EOA.address);
+      // const encodedAddress = encodeAbiParameters(
+      //   parseAbiParameters("address"),
+      //   [EOA.address]
+      //   // ["0x8F80e70C7A768c5E864BCA7BA95E392BF09a1b01"]
+      // );
+      // console.log(encodedAddress);
+      // const FLUIDKEY_HYDRATOR_ADDRESS = `0x1a93629bfcc6e9c7241e587094fae26f62503fad`;
+
+      // const hydratorContract = getContract({
+      //   address: FLUIDKEY_HYDRATOR_ADDRESS,
+      //   abi: FLUIDKEY_HYDRATOR_ABI,
+      //   client: {
+      //     public: publicClient,
+      //     wallet: smartAccountClient,
+      //   },
+      // });
+
+      // const txHash = await hydratorContract.write.deploySafe([
+      //   encodedAddress,
+      // ] as readonly unknown[]);
+
+      // console.log(txHash);
+      // await waitForTransactionReceipt(bundlerClient, { hash: txHash });
+      // await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
+      console.log("PORCO DIO");
       router.push("/home");
       // console.log(address);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setGeneratingStealthAddress(false);
     }
@@ -201,8 +265,9 @@ export default function Onboarding() {
             radius="full"
             onPress={async () => {
               await authenticate();
-              router.push("/home");
+              // router.push("/home");
             }}
+            isLoading={isAuthenticateLoading || generatingStealthAddress}
           >
             Start now!
           </Button>

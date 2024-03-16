@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/shared/providers";
+import "@/app/polyfills";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
