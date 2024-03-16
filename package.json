@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@circle-fin/circle-sdk": "^2.8.0",
+    "@circle-fin/developer-controlled-wallets": "^2.0.0",
+    "@circle-fin/smart-contract-platform": "^2.0.0",
     "@dynamic-labs/ethereum": "^2.0.0-alpha.10",
     "@dynamic-labs/ethereum-aa": "^2.0.0-alpha.10",
     "@dynamic-labs/sdk-react-core": "^2.0.0-alpha.10",
