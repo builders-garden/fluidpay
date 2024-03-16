@@ -24,21 +24,18 @@ export default function QrCodePage() {
 
   useEffect(() => {
     async function resolveAddress() {
-      console.log("Resolving address for", `${user?.username}.fkey.eth`);
       const mainnetClient = createPublicClient({
         chain: mainnet,
         transport: http(),
       });
       const resolved = await mainnetClient.getEnsAddress({
-        name: normalize(`${user?.username}.fkey.eth`),
+        name: normalize(`${user?.username}.fkeydev.eth`),
       });
-      console.log("result", resolved);
       setAddress(resolved);
     }
     resolveAddress();
-  });
+  }, [user]);
 
-  console.log(address);
   return (
     <div className="flex flex-col p-4 bg-[#000] space-y-4">
       <Button
@@ -54,19 +51,28 @@ export default function QrCodePage() {
       </Button>
       {!address && <Skeleton className="w-200 h-200" />}
       {address && (
-        <Canvas
-          text={address}
-          options={{
-            errorCorrectionLevel: "M",
-            margin: 3,
-            scale: 4,
-            width: 200,
-            color: {
-              dark: "#000",
-              light: "#FFF",
-            },
-          }}
-        />
+        <div className="flex flex-col text-center space-y-4">
+          <div className="flex flex-col space-y-4 bg-[#232324] p-4 rounded-lg mx-auto">
+            <Canvas
+              text={address}
+              options={{
+                errorCorrectionLevel: "M",
+                margin: 2,
+                scale: 4,
+                width: 250,
+                color: {
+                  dark: "#000",
+                  light: "#FFF",
+                },
+              }}
+            />
+            <p>
+              <span className="font-bold text-white">{user?.username}</span>
+              .fkeydev.eth
+            </p>
+          </div>
+          <p>Get paid by sharing this QR code</p>
+        </div>
       )}
     </div>
   );
