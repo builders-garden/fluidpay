@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 function AccountsPage() {
   const router = useRouter();
   const { smartAccountList } = useGetUserSmartAccounts();
-  console.log(smartAccountList);
+
   return (
     <div className="flex flex-col p-4 bg-gradient-to-b from-[#0061FF] h-full w-full to-[#000] space-y-4">
       <Button

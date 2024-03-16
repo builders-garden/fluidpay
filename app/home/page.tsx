@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { useGetUserSmartAccounts } from "@sefu/react-sdk";
 import { CreditCard, Download, Plus, QrCode, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
@@ -16,6 +17,10 @@ export default function Home() {
   const { user } = useDynamicContext();
   const { disconnect } = useDisconnect();
   const router = useRouter();
+
+  const { smartAccountList } = useGetUserSmartAccounts();
+  const mainAccount =
+    smartAccountList !== undefined ? smartAccountList[0] : null;
 
   return (
     <>

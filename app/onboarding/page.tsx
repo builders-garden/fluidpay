@@ -5,14 +5,16 @@ import {
   useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
+  useGenerateStealthAddress,
   useGetUser,
+  useGetUserSmartAccounts,
   useInitializedWalletAddress,
   useIsAddressRegistered,
   useRegisterUser,
 } from "@sefu/react-sdk";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useWalletClient } from "wagmi";
 
 export default function Onboarding() {
@@ -30,7 +32,21 @@ export default function Onboarding() {
     useIsAddressRegistered(address);
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
-  const { authenticate } = useAuthenticate();
+  const {
+    authenticate,
+    isLoading: isAuthenticateLoading,
+    isAuthenticated,
+  } = useAuthenticate();
+
+  const { smartAccountList } = useGetUserSmartAccounts();
+  const mainAccount =
+    smartAccountList !== undefined ? smartAccountList[0] : null;
+  const [generatingStealthAddress, setGeneratingStealthAddress] =
+    useState(false);
+  const { generateNewStealthAddress } = useGenerateStealthAddress({
+    idSmartAccount: mainAccount?.idSmartAccount!,
+    chainId: 8453,
+  });
 
   const {
     registerUser,
@@ -39,7 +55,7 @@ export default function Onboarding() {
     isError: isErrorRegisterUser,
   } = useRegisterUser();
 
-  console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
+  // console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
 
   const generateFluidpayKeys = async () => {
     try {
@@ -67,6 +83,24 @@ export default function Onboarding() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && smartAccountList && smartAccountList.length > 0)
+      generateDefaultAccount();
+  }, [isAuthenticated, smartAccountList]);
+
+  const generateDefaultAccount = async () => {
+    try {
+      setGeneratingStealthAddress(true);
+      const stealthAddress = await generateNewStealthAddress();
+      // router.push("/home");
+      console.log(stealthAddress);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setGeneratingStealthAddress(false);
     }
   };
 
@@ -151,17 +185,24 @@ export default function Onboarding() {
       )}
       {keys && isAddressRegistered && (
         <>
-          <Button
-            color="primary"
-            className="font-semibold"
-            radius="full"
-            onPress={async () => {
-              await authenticate();
-              router.push("/home");
-            }}
-          >
-            Start now!
-          </Button>
+          {!generatingStealthAddress && (
+            <Button
+              color="primary"
+              className="font-semibold"
+              radius="full"
+              onPress={async () => {
+                await authenticate();
+              }}
+              isLoading={isAuthenticateLoading}
+            >
+              Start now!
+            </Button>
+          )}
+          {generatingStealthAddress && (
+            <p className="animate-pulse text-center text-sm">
+              Creating fluidpay card...
+            </p>
+          )}
         </>
       )}
     </div>

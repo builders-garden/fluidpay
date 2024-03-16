@@ -1,7 +1,6 @@
 "use client";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input } from "@nextui-org/react";
-import { useGetUserSmartAccounts } from "@sefu/react-sdk";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,7 +12,6 @@ function CreateAccountPage() {
   >("");
   const [accountName, setAccountName] = useState<string>("");
   const { user } = useDynamicContext();
-  const { smartAccountList } = useGetUserSmartAccounts();
   //   const { generateNewStealthAddress } = useGenerateStealthAddress({ idSmartAccount: smartAccountList[0].idSmartAccount, chainId: base.id })
 
   if (accountType === "") {
