@@ -13,10 +13,6 @@ export default function Transfers({
   transfers: SmartAccountTransfer[];
 }) {
   const timeAgo = new TimeAgo("en-US");
-  console.log(
-    transfers[0]?.createdAt,
-    transfers[0]?.stealthSafeTransfer?.creationDate
-  );
   return (
     <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4">
       {transfers.map((transfer) => (
