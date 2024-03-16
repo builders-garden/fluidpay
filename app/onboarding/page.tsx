@@ -2,6 +2,7 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input, Skeleton } from "@nextui-org/react";
 import {
+  useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
   useGetUser,
@@ -29,6 +30,7 @@ export default function Onboarding() {
     useIsAddressRegistered(address);
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
+  const { authenticate } = useAuthenticate();
 
   const {
     registerUser,
@@ -153,7 +155,8 @@ export default function Onboarding() {
             color="primary"
             className="font-semibold"
             radius="full"
-            onPress={() => {
+            onPress={async () => {
+              await authenticate();
               router.push("/home");
             }}
           >

@@ -1,6 +1,4 @@
 "use client";
-
-import QrCodeModal from "@/components/modals/qr-code-modal";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
   Avatar,
@@ -9,7 +7,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  useDisclosure,
 } from "@nextui-org/react";
 import { CreditCard, Download, Plus, QrCode, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,8 +14,6 @@ import { useDisconnect } from "wagmi";
 
 export default function Home() {
   const { user } = useDynamicContext();
-  const { isOpen: qrCodeModalOpen, onOpenChange: onQrCodeOpenChange } =
-    useDisclosure();
   const { disconnect } = useDisconnect();
   const router = useRouter();
 
@@ -58,7 +53,7 @@ export default function Home() {
               variant="light"
               isIconOnly
               radius="full"
-              onPress={() => onQrCodeOpenChange()}
+              onPress={() => router.push("/home/qr")}
             >
               <QrCode />
             </Button>
@@ -137,7 +132,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <QrCodeModal isOpen={qrCodeModalOpen} onOpenChange={onQrCodeOpenChange} />
+      {/* <QrCodeModal isOpen={qrCodeModalOpen} onOpenChange={onQrCodeOpenChange} /> */}
     </>
   );
 }
