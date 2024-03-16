@@ -247,7 +247,7 @@ function AccountsPage() {
                   </div>
                 )}
                 <p className="text-[#8F8F91] leading-none font-medium">
-                  $50,00
+                  ${parseFloat(account.balance).toFixed(2)}
                 </p>
               </div>
             </Button>

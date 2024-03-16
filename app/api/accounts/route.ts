@@ -1,5 +1,8 @@
+import { fetchUSDCTokenBalances } from "@/lib/airstack";
 import { getUserAccounts, upsertAccount } from "@/lib/db/accounts";
+import { Account } from "@/lib/db/interfaces";
 import { upsertRecord } from "@/lib/db/records";
+import { getWalletBalance } from "@/lib/lifi";
 import { NextResponse, NextRequest } from "next/server";
 import slugify from "slugify";
 import { normalize } from "viem/ens";
@@ -41,5 +44,21 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const username = req.headers.get("x-username");
   const accounts = await getUserAccounts(username!);
-  return NextResponse.json(accounts);
+  const enrichedAccounts = await enrichAccountsWithBalances(accounts);
+  return NextResponse.json(enrichedAccounts);
+};
+
+export const enrichAccountsWithBalances = async (accounts: Account[]) => {
+  const tokenBalances = await fetchUSDCTokenBalances(
+    accounts.map((a) => a.address)
+  );
+  return accounts.map((a) => ({
+    balance: tokenBalances
+      ? tokenBalances?.find(
+          (b) =>
+            b.owner?.addresses![0].toLowerCase() === a.address.toLowerCase()
+        )?.formattedAmount
+      : "0",
+    ...a,
+  }));
 };
