@@ -1,4 +1,4 @@
-import { supabase } from "../supabase";
+import { supabase, supabaseAdmin } from "../supabase";
 
 export enum AccountType {
   STANDARD = "standard",
@@ -9,6 +9,7 @@ export enum AccountType {
 
 export interface Account {
   id: string;
+  slug: string;
   address: string;
   owner_username: string;
   name: string;
@@ -16,7 +17,7 @@ export interface Account {
 }
 
 export const upsertAccount = async (account: Omit<Account, "id">) => {
-  const { data, error } = await supabase.from("accounts").upsert(account, {
+  const { data, error } = await supabaseAdmin.from("accounts").upsert(account, {
     onConflict: "address",
   });
   if (error) {

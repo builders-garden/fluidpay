@@ -1,4 +1,4 @@
-import { supabase } from "../supabase";
+import { supabase, supabaseAdmin } from "../supabase";
 
 export interface Record {
   id: string;
@@ -21,8 +21,8 @@ export const getRecord = async (id: string) => {
 };
 
 export const upsertRecord = async (record: Omit<Record, "id">) => {
-  const { data, error } = await supabase.from("records").upsert(record, {
-    onConflict: "id",
+  const { data, error } = await supabaseAdmin.from("records").upsert(record, {
+    onConflict: "name",
   });
   if (error) {
     throw error;

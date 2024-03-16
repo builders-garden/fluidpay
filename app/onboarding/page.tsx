@@ -128,7 +128,7 @@ export default function Onboarding() {
     try {
       setGeneratingStealthAddress(true);
 
-      const EOA = getEOA(fluidkeyClient!);
+      const EOA = getEOA(fluidkeyClient!, 1);
       const stealthAddress = predictStealthAddress(fluidkeyClient!);
 
       const smartAccountClient = await getSmartAccountClient(
