@@ -12,9 +12,14 @@ export const GET = async (req: NextRequest) => {
   }
   const users = await getUsers(username);
   // filter users with a username that starts with the "username" query parameter
-  const filteredUsers = users.filter((user: { username: string }) =>
-    user.username?.toLowerCase().startsWith(username?.toLowerCase())
-  );
+  const filteredUsers = users
+    .filter((user) =>
+      user.username?.toLowerCase().startsWith(username?.toLowerCase())
+    )
+    .map((user) => ({
+      username: user.username,
+      address: user.walletPublicKey,
+    }));
 
   return NextResponse.json(filteredUsers);
 };

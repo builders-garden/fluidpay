@@ -1,4 +1,34 @@
-export const getUsers = async (username: string) => {
+interface Session {
+  id: string;
+}
+
+interface Wallet {
+  id: string;
+  name: string;
+  chain: string;
+  publicKey: string;
+  provider: string;
+}
+
+export interface DynamicUser {
+  id: string;
+  projectEnvironmentId: string;
+  email: string;
+  username: string;
+  firstVisit: string;
+  lastVisit: string;
+  metadata: Record<string, unknown>;
+  walletPublicKey: string;
+  wallet: string;
+  chain: string;
+  createdAt: string;
+  updatedAt: string;
+  sessions: Session[];
+  wallets: Wallet[];
+  oauthAccounts: any[];
+}
+
+export const getUsers = async (username: string): Promise<DynamicUser[]> => {
   const options = {
     method: "GET",
     headers: { Authorization: `Bearer ${process.env.DYNAMIC_API_TOKEN}` },
