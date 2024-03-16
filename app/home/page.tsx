@@ -1,5 +1,6 @@
 "use client";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { formatUnits } from "viem";
 import {
   Avatar,
   Button,

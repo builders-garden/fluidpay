@@ -1,9 +1,8 @@
 import { supabase } from "../supabase";
-import { supabaseAdmin } from "../supabase-admin";
 import { Account } from "./interfaces";
 
 export const upsertAccount = async (account: Omit<Account, "id">) => {
-  const { data, error } = await supabaseAdmin.from("accounts").upsert(account, {
+  const { data, error } = await supabase.from("accounts").upsert(account, {
     onConflict: "address",
   });
   if (error) {
@@ -13,7 +12,6 @@ export const upsertAccount = async (account: Omit<Account, "id">) => {
 };
 
 export const getUserAccounts = async (username: string) => {
-  console.log("username", username);
   const { data, error } = await supabase
     .from("accounts")
     .select("*")

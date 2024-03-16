@@ -1,4 +1,4 @@
-import { upsertAccount } from "@/lib/db/accounts";
+import { getUserAccounts, upsertAccount } from "@/lib/db/accounts";
 import { upsertRecord } from "@/lib/db/records";
 import { NextResponse, NextRequest } from "next/server";
 import slugify from "slugify";
@@ -37,4 +37,11 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     addresses: [address],
   });
   return NextResponse.json(newAccount);
+};
+
+export const GET = async (req: NextRequest, res: NextResponse) => {
+  const username = req.headers.get("x-username");
+  const accounts = await getUserAccounts(username!);
+  console.log(accounts);
+  return NextResponse.json(accounts);
 };

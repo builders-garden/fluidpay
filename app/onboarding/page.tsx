@@ -127,7 +127,17 @@ export default function Onboarding() {
     try {
       setGeneratingStealthAddress(true);
 
-      const accounts = await getUserAccounts(user?.username!);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/accounts`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      const accounts = await res.json();
       console.log(accounts);
       if (accounts.length > 0) {
         router.push("/home");

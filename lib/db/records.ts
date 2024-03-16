@@ -1,5 +1,4 @@
 import { supabase } from "../supabase";
-import { supabaseAdmin } from "../supabase-admin";
 import { Record } from "./interfaces";
 
 export const getRecord = async (id: string) => {
@@ -14,7 +13,7 @@ export const getRecord = async (id: string) => {
 };
 
 export const upsertRecord = async (record: Omit<Record, "id">) => {
-  const { data, error } = await supabaseAdmin.from("records").upsert(record, {
+  const { data, error } = await supabase.from("records").upsert(record, {
     onConflict: "name",
   });
   if (error) {
