@@ -3,20 +3,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
-import { initiateSmartContractPlatformClient } from '@circle-fin/smart-contract-platform';
 import forge from "node-forge";
 
 const circleAPIKey = process.env.CIRCLE_API_KEY;
 const circleSecret = process.env.CIRCLE_SECRET;
 const circlePublicKey = process.env.CIRCLE_PUBLIC_KEY;
-const contractAddress =  "" //TODO
+const contractAddress =  "0x5dA54faE364b554a528946535ACe706a1bc9F52d" 
 
 const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
-    apiKey: circleAPIKey!,
-    entitySecret: circleSecret!
-});
-
-const circleContractSdk = initiateSmartContractPlatformClient({
     apiKey: circleAPIKey!,
     entitySecret: circleSecret!
 });

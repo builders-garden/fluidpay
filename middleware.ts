@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
       }
     );
   }
-
+  
   try {
     const token = authToken.replace("Bearer ", "");
     const key = await importSPKI(
