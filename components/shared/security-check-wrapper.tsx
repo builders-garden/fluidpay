@@ -90,8 +90,6 @@ function SecurityCheckWrapper(props: { children: ReactNode }) {
   const fluidkeyClient = useFluidkeyClient();
   const keys = fluidkeyClient!.areMetaStealthKeysInitialized();
 
-  console.log(keys);
-
   useEffect(() => {
     if (!isAuthenticated && !keys && user && !user.newUser) {
       onOpenChange();

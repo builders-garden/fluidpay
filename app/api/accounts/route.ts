@@ -11,7 +11,6 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const slug = slugify(name.toLowerCase(), "-");
   try {
     const normalizedName = normalize(slug);
-    console.log(normalizedName);
   } catch (e) {
     return NextResponse.json(
       {
@@ -42,6 +41,5 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const username = req.headers.get("x-username");
   const accounts = await getUserAccounts(username!);
-  console.log(accounts);
   return NextResponse.json(accounts);
 };
