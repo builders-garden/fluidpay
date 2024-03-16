@@ -29,7 +29,6 @@ export default function Home() {
 
   if (user && isFullyConnected) {
     if (user.newUser || !isAddressRegistered) {
-      console.log("HERE");
       return redirect("/onboarding");
     } else if (isAuthenticated) {
       return redirect("/home");

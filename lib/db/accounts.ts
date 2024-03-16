@@ -19,7 +19,6 @@ export const getUserAccounts = async (username: string) => {
   if (error) {
     throw error;
   }
-  console.log("data", data);
   return data;
 };
 

@@ -79,13 +79,7 @@ export default function Onboarding() {
 
   const launchRegistration = async () => {
     try {
-      console.log(
-        initializedWalletAddress.address === address,
-        address,
-        initializedWalletAddress.address
-      );
       if (initializedWalletAddress.address === address) {
-        console.log("registering user");
         const res = await registerUser({
           // @ts-ignore
           walletClient,
@@ -100,7 +94,6 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (isAuthenticated && smartAccountList && smartAccountList.length > 0) {
-      console.log("generating stealth address");
       generateDefaultAccount();
     }
   }, [isAuthenticated, smartAccountList]);
@@ -138,7 +131,6 @@ export default function Onboarding() {
         }
       );
       const accounts = await res.json();
-      console.log(accounts);
       if (accounts.length > 0) {
         router.push("/home");
         return;
@@ -159,7 +151,7 @@ export default function Onboarding() {
       await createDefaultAccount(stealthAddress);
       router.push("/home");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setGeneratingStealthAddress(false);
     }
