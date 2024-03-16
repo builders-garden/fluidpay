@@ -26,10 +26,9 @@ function SecurityCheckModal({
   onOpenChange: () => void;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const { authenticate, isAuthenticated } = useAuthenticate();
+  const { authenticate } = useAuthenticate();
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
-  const fluidkeyClient = useFluidkeyClient();
 
   const generateKeysAndAuthenticate = async () => {
     setLoading(true);
@@ -89,8 +88,6 @@ function SecurityCheckWrapper(props: { children: ReactNode }) {
   const { isAuthenticated } = useAuthenticate();
   const fluidkeyClient = useFluidkeyClient();
   const keys = fluidkeyClient!.areMetaStealthKeysInitialized();
-
-  console.log(keys);
 
   useEffect(() => {
     if (!isAuthenticated && !keys && user && !user.newUser) {
