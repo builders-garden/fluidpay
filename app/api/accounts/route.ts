@@ -31,7 +31,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   // save ens subdomain record
   await upsertRecord({
     owner: username!,
-    name: slug,
+    name: `${slug}.${username}`,
     contenthash: "",
     text: "",
     addresses: [address],

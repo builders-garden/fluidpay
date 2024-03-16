@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import {
   useGetSmartAccountBalance,
+  useGetSmartAccountTransfers,
   useGetUserSmartAccounts,
   useResetClient,
 } from "@sefu/react-sdk";
@@ -19,6 +20,8 @@ import { CreditCard, Download, Plus, QrCode, Search, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { base } from "viem/chains";
 import { useDisconnect } from "wagmi";
+import { formatBigInt } from "@/lib/utils";
+import Transfers from "@/components/transfers";
 
 export default function Home() {
   const { user } = useDynamicContext();
@@ -32,7 +35,12 @@ export default function Home() {
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
   });
-  console.log(balanceData);
+  const { data, loadMore, moreDataToLoad, refetch } =
+    useGetSmartAccountTransfers({
+      idSmartAccount: mainAccount?.idSmartAccount || "",
+      chainId: base.id,
+      polling: true,
+    });
 
   const { reset } = useResetClient();
 
@@ -101,9 +109,10 @@ export default function Home() {
           <div className="font-bold">
             $
             <span className="text-6xl">
-              {balanceData.length === 0 ? "0" : balanceData[0].amount}
+              {balanceData.length === 0
+                ? "0.00"
+                : formatBigInt(balanceData[0].amount, 6)}
             </span>
-            .00
           </div>
         </div>
         <div className="flex flex-row justify-center space-x-16">
@@ -126,44 +135,7 @@ export default function Home() {
             <p className="text-xs">Send</p>
           </div>
         </div>
-        <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4">
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row space-x-4 items-center">
-              <Avatar name="A" />
-              <div className="flex flex-col">
-                <p className="text-lg">frankc - dinner out burger</p>
-                <p className="text-sm text-gray-500">Today, 13:00</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-lg">$10.00</p>
-            </div>
-          </div>
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row space-x-4 items-center">
-              <div>A</div>
-              <div className="flex flex-col">
-                <p className="text-lg">frankc - dinner out burger</p>
-                <p className="text-sm text-gray-500">Today, 13:00</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-lg">$10.00</p>
-            </div>
-          </div>
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row space-x-4 items-center">
-              <div>A</div>
-              <div className="flex flex-col">
-                <p className="text-lg">frankc - dinner out burger</p>
-                <p className="text-sm text-gray-500">Today, 13:00</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-lg">$10.00</p>
-            </div>
-          </div>
-        </div>
+        <Transfers transfers={data || []} />
       </div>
       {/* <QrCodeModal isOpen={qrCodeModalOpen} onOpenChange={onQrCodeOpenChange} /> */}
     </>

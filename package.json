@@ -27,6 +27,7 @@
     "@zerodev/sdk": "^5.1.11",
     "bigint-buffer": "^1.1.5",
     "framer-motion": "^11.0.14",
+    "javascript-time-ago": "^2.5.9",
     "jose": "^5.2.3",
     "js-sha256": "^0.11.0",
     "jsonwebtoken": "^9.0.2",
