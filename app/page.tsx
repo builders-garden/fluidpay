@@ -21,7 +21,7 @@ export default function Home() {
   console.log(user);
 
   if (user) {
-    if (user.newUser && !isAddressRegistered) {
+    if (user.newUser || !isAddressRegistered) {
       return redirect("/onboarding");
     } else {
       return redirect("/dashboard");
