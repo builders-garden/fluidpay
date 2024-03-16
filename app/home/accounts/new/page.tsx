@@ -1,5 +1,5 @@
 "use client";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input } from "@nextui-org/react";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,19 @@ function CreateAccountPage() {
   >("");
   const [accountName, setAccountName] = useState<string>("");
   const { user } = useDynamicContext();
+  const [loading, setLoading] = useState<boolean>(false);
+  const jwt = getAuthToken();
   //   const { generateNewStealthAddress } = useGenerateStealthAddress({ idSmartAccount: smartAccountList[0].idSmartAccount, chainId: base.id })
+
+  const createAccount = async () => {
+    const deployStealthResult = await fetch("/api/deploy-stealth", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    const { address } = await deployStealthResult.json();
+  };
 
   if (accountType === "") {
     return (

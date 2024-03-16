@@ -1,16 +1,17 @@
 "use client";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input, Skeleton } from "@nextui-org/react";
 import {
   useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
-  useGenerateStealthAddress,
+  useGetSmartAccount,
   useGetUser,
   useGetUserSmartAccounts,
   useInitializedWalletAddress,
   useIsAddressRegistered,
   useRegisterUser,
+  useSetUsername,
 } from "@sefu/react-sdk";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -39,14 +40,14 @@ export default function Onboarding() {
   } = useAuthenticate();
 
   const { smartAccountList } = useGetUserSmartAccounts();
-  const mainAccount =
-    smartAccountList !== undefined ? smartAccountList[0] : null;
+  const { smartAccount: mainAccount } = useGetSmartAccount({
+    idSmartAccount: smartAccountList ? smartAccountList[0]?.idSmartAccount : "",
+  });
+
   const [generatingStealthAddress, setGeneratingStealthAddress] =
     useState(false);
-  const { generateNewStealthAddress } = useGenerateStealthAddress({
-    idSmartAccount: mainAccount?.idSmartAccount!,
-    chainId: 8453,
-  });
+  const jwt = getAuthToken();
+  const { setUsername } = useSetUsername();
 
   const {
     registerUser,
@@ -94,9 +95,17 @@ export default function Onboarding() {
   const generateDefaultAccount = async () => {
     try {
       setGeneratingStealthAddress(true);
-      const stealthAddress = await generateNewStealthAddress();
-      // router.push("/home");
-      console.log(stealthAddress);
+      const deployStealthResult = await fetch("/api/deploy-stealth", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const { address } = await deployStealthResult.json();
+
+      await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
+      router.push("/home");
+      // console.log(address);
     } catch (error) {
       console.error(error);
     } finally {
