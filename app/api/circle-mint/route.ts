@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
 import forge from "node-forge";
+import viem from "viem";
 
 const circleAPIKey = process.env.CIRCLE_API_KEY;
 const circleSecret = process.env.CIRCLE_SECRET;
@@ -37,12 +38,14 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     const encryptedData64 = forge.util.encode64(encryptedData);
     console.log(encryptedData64)
 
+    const voidBytes = viem.numberToBytes(0);
     //call the mint function on the ERC1155 NFT contract
     const response = await circleDeveloperSdk.createContractExecutionTransaction({
         walletId: '39fd2c15-550a-5f6f-beda-1ec1b4260ce0',
         contractAddress: contractAddress,
         abiFunctionSignature: 'safeMint(address, uint256, uint256, bytes)',
-        abiParameters: [addressReceiver, tokenId, 1, "0x"], 
+        // bytes param
+        abiParameters: [addressReceiver, tokenId, 1, voidBytes], 
         fee: {
           type: 'level',
           config: {
