@@ -2973,10 +2973,10 @@
     "@noble/hashes" "~1.3.2"
     "@scure/base" "~1.1.4"
 
-"@sefu/react-sdk@^0.2.30":
-  version "0.2.30"
-  resolved "https://registry.yarnpkg.com/@sefu/react-sdk/-/react-sdk-0.2.30.tgz#177a87faea4288973a0ebc7ffb28375282b76fc4"
-  integrity sha512-yi5qjA24YY3WRcyOpj7bUn68k2cmCxCJH4+A1118HhQsXBz+VdS57zUcT9yV+NcrgS/KKImq2/4N80eaee9vgQ==
+"@sefu/react-sdk@^0.2.31":
+  version "0.2.31"
+  resolved "https://registry.yarnpkg.com/@sefu/react-sdk/-/react-sdk-0.2.31.tgz#5b34597b4e8425aaf608d25259b820c2f5f3ab2d"
+  integrity sha512-WvbSvMjO5xzPDh8AHOyLNoiHFebUv+Q56xf+a8NEMJK7RSrVjsSS9IpD1Wj45ZvDb2jDM2i08uUNcxmZPY0Gqg==
   dependencies:
     "@apollo/client" "3.9.4"
     "@fluidkey/stealth-account-kit" "0.0.29"
