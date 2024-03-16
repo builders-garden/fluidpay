@@ -5,7 +5,6 @@ import {
   useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
-  useGetSmartAccount,
   useGetUser,
   useGetUserSmartAccounts,
   useInitializedWalletAddress,
@@ -17,7 +16,6 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  http,
   useAccount,
   useDisconnect,
   usePublicClient,
@@ -25,19 +23,11 @@ import {
 } from "wagmi";
 import "@/app/polyfills";
 import { generateEphemeralPrivateKey } from "@fluidkey/stealth-account-kit";
-import * as secp from "@noble/secp256k1";
-import { FLUIDKEY_HYDRATOR_ABI } from "@/lib/abi";
-import { bundlerClient, paymasterClient } from "@/lib/pimlico";
-import {
-  ENTRYPOINT_ADDRESS_V06,
-  createSmartAccountClient,
-  walletClientToSmartAccountSigner,
-} from "permissionless";
-import { signerToSafeSmartAccount } from "permissionless/accounts";
-import { getContract, padHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { waitForTransactionReceipt } from "viem/actions";
-import { base } from "viem/chains";
+import { getSmartAccountClient } from "@/lib/smart-accounts";
+import { deployFluidKeyStealthAddress } from "@/lib/contracts";
+import { AccountType } from "@/lib/db/accounts";
+import { getEOA } from "@/lib/eoa";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -54,6 +44,7 @@ export default function Onboarding() {
     useIsAddressRegistered(address);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+
   const { generateKeys } = useGenerateKeys();
   const {
     authenticate,
@@ -62,9 +53,6 @@ export default function Onboarding() {
   } = useAuthenticate();
 
   const { smartAccountList } = useGetUserSmartAccounts();
-  const { smartAccount: mainAccount } = useGetSmartAccount({
-    idSmartAccount: smartAccountList ? smartAccountList[0]?.idSmartAccount : "",
-  });
 
   const [generatingStealthAddress, setGeneratingStealthAddress] =
     useState(false);
@@ -77,8 +65,6 @@ export default function Onboarding() {
     isLoading: isLoadingRegisterUser,
     isError: isErrorRegisterUser,
   } = useRegisterUser();
-
-  // console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
 
   const generateFluidpayKeys = async () => {
     try {
@@ -95,13 +81,11 @@ export default function Onboarding() {
   const launchRegistration = async () => {
     try {
       if (initializedWalletAddress.address === address) {
-        console.log("registering user");
         const res = await registerUser({
           // @ts-ignore
           walletClient,
           whitelistCode: inviteCode,
         });
-        console.log(res);
         await refetchRegistration();
       }
     } catch (error) {
@@ -110,79 +94,47 @@ export default function Onboarding() {
   };
 
   useEffect(() => {
-    console.log(smartAccountList, isAuthenticated);
     if (isAuthenticated && smartAccountList && smartAccountList.length > 0)
       generateDefaultAccount();
   }, [isAuthenticated, smartAccountList]);
+
+  const createDefaultAccount = async (address: string) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/accounts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          address: address,
+          name: "Account 1",
+          type: AccountType.STANDARD,
+        }),
+      }
+    );
+  };
 
   const generateDefaultAccount = async () => {
     try {
       setGeneratingStealthAddress(true);
 
-      const vpkNode = fluidkeyClient?.generateViewingPrivateKeyNode(0);
+      const EOA = getEOA(fluidkeyClient!);
 
-      const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
-        viewingPrivateKeyNode: vpkNode!,
-        nonce: BigInt(0),
-        chainId: 8453,
-      });
-      const ephemeralPubKey = secp.getPublicKey(
-        Uint8Array.from(Buffer.from(ephemeralPrivateKey.slice(2), "hex"))
+      const smartAccountClient = await getSmartAccountClient(
+        walletClient,
+        publicClient
       );
-      const stealthPrivateKey = fluidkeyClient?.getStealthPrivateKey(
-        `0x${Buffer.from(ephemeralPubKey).toString("hex")}`
+
+      const stealthAddress = await deployFluidKeyStealthAddress(
+        EOA,
+        smartAccountClient
       );
-      const EOA = privateKeyToAccount(stealthPrivateKey!);
-      // @ts-ignore
-      const customSigner = walletClientToSmartAccountSigner(walletClient);
-
-      // @ts-ignore
-      const safeAccount = await signerToSafeSmartAccount(publicClient, {
-        entryPoint: ENTRYPOINT_ADDRESS_V06,
-        signer: customSigner,
-        saltNonce: BigInt(0), // optional
-        safeVersion: "1.4.1",
-      });
-
-      const smartAccountClient = createSmartAccountClient({
-        account: safeAccount,
-        entryPoint: ENTRYPOINT_ADDRESS_V06,
-        chain: base,
-        bundlerTransport: http(
-          `https://api.pimlico.io/v1/base/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`
-        ),
-        middleware: {
-          gasPrice: async () =>
-            (await bundlerClient.getUserOperationGasPrice()).fast, // use pimlico bundler to get gas prices
-          sponsorUserOperation: paymasterClient.sponsorUserOperation, // optional
-        },
-      });
-
-      const encodedAddress = padHex(EOA.address, { dir: "right", size: 32 });
-
-      const FLUIDKEY_HYDRATOR_ADDRESS = `0x1a93629bfcc6e9c7241e587094fae26f62503fad`;
-
-      const hydratorContract = getContract({
-        address: FLUIDKEY_HYDRATOR_ADDRESS,
-        abi: FLUIDKEY_HYDRATOR_ABI,
-        client: {
-          public: publicClient,
-          wallet: smartAccountClient,
-        },
-      });
-
-      const txHash = await hydratorContract.write.deploySafe([
-        encodedAddress,
-      ] as readonly unknown[]);
-
-      console.log(txHash);
-      // @ts-ignore
-      await waitForTransactionReceipt(publicClient, { hash: txHash });
 
       await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
-
+      await createDefaultAccount(stealthAddress);
       router.push("/home");
-      // console.log(address);
     } catch (error) {
       console.log(error);
     } finally {

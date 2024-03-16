@@ -19,7 +19,6 @@ function FluidkeyRegisterAddress({
   } = useRegisterUser();
   const launchRegistration = async () => {
     if (initializedWalletAddress === connectedAddress) {
-      console.log("registering user");
       const result = await registerUser({
         // @ts-ignore
         walletClient,

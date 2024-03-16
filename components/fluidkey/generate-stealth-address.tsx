@@ -14,7 +14,6 @@ const FluidkeyGenerateStealthAddress = ({
     <button
       onClick={async () => {
         const result = await generateNewStealthAddress();
-        console.log(result);
       }}
     >
       Generate New Stealth Address

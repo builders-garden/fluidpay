@@ -20,7 +20,7 @@ export const getRecord = async (id: string) => {
   return data;
 };
 
-export const createRecord = async (record: Omit<Record, "id">) => {
+export const upsertRecord = async (record: Omit<Record, "id">) => {
   const { data, error } = await supabase.from("records").upsert(record, {
     onConflict: "id",
   });

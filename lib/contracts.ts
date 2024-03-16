@@ -1,28 +1,37 @@
-import { encodeAbiParameters, parseAbiParameters } from "viem";
+import { PrivateKeyAccount, getContract, padHex } from "viem";
 
 import { FLUIDKEY_HYDRATOR_ABI } from "./abi";
-import { account, publicClient, walletClient } from "./config";
+import { publicClient } from "./config";
+import { waitForTransactionReceipt } from "viem/actions";
 
 const FLUIDKEY_HYDRATOR_ADDRESS = `0x1a93629bfcc6e9c7241e587094fae26f62503fad`;
 
-export const deployFluidKeyStealthAddress = async (address: `0x${string}`) => {
-  console.log({
-    account,
-    address: FLUIDKEY_HYDRATOR_ADDRESS,
-    abi: FLUIDKEY_HYDRATOR_ABI,
-    args: [address as `0x${string}`],
-    functionName: "deploySafe",
-  });
-  const encodedAddress = encodeAbiParameters(parseAbiParameters("address"), [
-    address,
-  ]);
+export const deployFluidKeyStealthAddress = async (
+  EOA: PrivateKeyAccount,
+  smartAccountClient: any
+) => {
+  const encodedAddress = padHex(EOA.address, { dir: "right", size: 32 });
 
-  const { request } = await publicClient.simulateContract({
-    account,
+  // @ts-ignore
+  const hydratorContract = getContract({
     address: FLUIDKEY_HYDRATOR_ADDRESS,
     abi: FLUIDKEY_HYDRATOR_ABI,
-    args: [encodedAddress],
-    functionName: "deploySafe",
+    client: {
+      public: publicClient,
+      wallet: smartAccountClient,
+    },
   });
-  await walletClient.writeContract(request);
+
+  const { result } = await hydratorContract.simulate.deploySafe([
+    encodedAddress,
+  ] as readonly unknown[]);
+
+  // @ts-ignore
+  const txHash = await hydratorContract.write.deploySafe([
+    encodedAddress,
+  ] as readonly unknown[]);
+
+  await waitForTransactionReceipt(publicClient, { hash: txHash });
+
+  return result as `0x${string}`;
 };
