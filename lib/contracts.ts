@@ -22,16 +22,10 @@ export const deployFluidKeyStealthAddress = async (
     },
   });
 
-  const { result } = await hydratorContract.simulate.deploySafe([
-    encodedAddress,
-  ] as readonly unknown[]);
-
   // @ts-ignore
   const txHash = await hydratorContract.write.deploySafe([
     encodedAddress,
   ] as readonly unknown[]);
 
   await waitForTransactionReceipt(publicClient, { hash: txHash });
-
-  return result as `0x${string}`;
 };

@@ -27,7 +27,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
 import { AccountType } from "@/lib/db/accounts";
-import { getEOA } from "@/lib/eoa";
+import { getEOA, predictStealthAddress } from "@/lib/eoa";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -80,7 +80,13 @@ export default function Onboarding() {
 
   const launchRegistration = async () => {
     try {
+      console.log(
+        initializedWalletAddress.address === address,
+        address,
+        initializedWalletAddress.address
+      );
       if (initializedWalletAddress.address === address) {
+        console.log("registering user");
         const res = await registerUser({
           // @ts-ignore
           walletClient,
@@ -94,8 +100,10 @@ export default function Onboarding() {
   };
 
   useEffect(() => {
-    if (isAuthenticated && smartAccountList && smartAccountList.length > 0)
+    if (isAuthenticated && smartAccountList && smartAccountList.length > 0) {
+      console.log("generating stealth address");
       generateDefaultAccount();
+    }
   }, [isAuthenticated, smartAccountList]);
 
   const createDefaultAccount = async (address: string) => {
@@ -127,12 +135,11 @@ export default function Onboarding() {
         publicClient
       );
 
-      const stealthAddress = await deployFluidKeyStealthAddress(
-        EOA,
-        smartAccountClient
-      );
+      await deployFluidKeyStealthAddress(EOA, smartAccountClient);
 
       await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
+
+      const stealthAddress = predictStealthAddress(fluidkeyClient!);
       await createDefaultAccount(stealthAddress);
       router.push("/home");
     } catch (error) {
@@ -230,6 +237,7 @@ export default function Onboarding() {
             radius="full"
             onPress={async () => {
               await authenticate();
+              generateDefaultAccount();
               // router.push("/home");
             }}
             isLoading={isAuthenticateLoading || generatingStealthAddress}
