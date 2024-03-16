@@ -9,14 +9,8 @@ import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 
 import { createPublicClient, http } from "viem";
-import {
-  useGetUserSmartAccounts,
-  useSetUsername,
-  useGetUser,
-  useIsUsernameAvailable,
-} from "@sefu/react-sdk";
 
-export default function QrCodePage() {
+function QrCodePage() {
   const router = useRouter();
   const { Canvas } = useQRCode();
   const { user, authToken } = useDynamicContext();
@@ -71,3 +65,5 @@ export default function QrCodePage() {
     </div>
   );
 }
+
+export default QrCodePage;
