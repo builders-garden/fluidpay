@@ -7,7 +7,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
 } from "@nextui-org/react";
 import {
   useGetSmartAccountBalance,
@@ -15,7 +14,7 @@ import {
   useGetUserSmartAccounts,
   useResetClient,
 } from "@sefu/react-sdk";
-import { CreditCard, Download, Plus, QrCode, Search, Send } from "lucide-react";
+import { CreditCard, Download, Plus, QrCode, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { base } from "viem/chains";
 import { useDisconnect } from "wagmi";
@@ -60,7 +59,7 @@ export default function Home() {
                 <Avatar
                   as="button"
                   name={user?.username?.substring(0, 1).toUpperCase()}
-                  className="transition-transform w-[52px]"
+                  className="transition-transform"
                 />
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -68,7 +67,7 @@ export default function Home() {
                   <p className="font-semibold">Signed in as</p>
                   <p className="font-semibold">{user?.email}</p>
                 </DropdownItem>
-                <DropdownItem key="profile" className="h-14 gap-2">
+                <DropdownItem key="rewards" className="h-14 gap-2">
                   <p>Rewards</p>
                 </DropdownItem>
                 <DropdownItem
@@ -80,12 +79,12 @@ export default function Home() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Input
+            {/* <Input
               placeholder="Search"
               isClearable
               className="w-full"
               startContent={<Search />}
-            />
+            /> */}
           </div>
           <div className="flex flex-row items-center space-x-2">
             <Button
@@ -119,19 +118,34 @@ export default function Home() {
         </div>
         <div className="flex flex-row justify-center space-x-16">
           <div className="flex-flex-col text-center space-y-2">
-            <Button isIconOnly radius="full" size="lg">
+            <Button
+              isIconOnly
+              radius="full"
+              size="lg"
+              onPress={() => router.push("/home/qr")}
+            >
               <Plus />
             </Button>
             <p className="text-xs">Deposit</p>
           </div>
           <div className="flex-flex-col text-center space-y-2">
-            <Button isIconOnly radius="full" size="lg">
+            <Button
+              isIconOnly
+              radius="full"
+              size="lg"
+              onPress={() => router.push("/home/request")}
+            >
               <Download />
             </Button>
             <p className="text-xs">Request</p>
           </div>
           <div className="flex-flex-col text-center space-y-2">
-            <Button isIconOnly radius="full" size="lg">
+            <Button
+              isIconOnly
+              radius="full"
+              size="lg"
+              onPress={() => router.push("/home/send")}
+            >
               <Send />
             </Button>
             <p className="text-xs">Send</p>

@@ -15,18 +15,21 @@ function QrCodePage() {
   const { Canvas } = useQRCode();
   const { user, authToken } = useDynamicContext();
   const [address, setAddress] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const resolveAddress = async () => {
+    const mainnetClient = createPublicClient({
+      chain: mainnet,
+      transport: http(),
+    });
+    const resolved = await mainnetClient.getEnsAddress({
+      name: normalize(`${user?.username}.fkeydev.eth`),
+    });
+    setAddress(resolved);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    async function resolveAddress() {
-      const mainnetClient = createPublicClient({
-        chain: mainnet,
-        transport: http(),
-      });
-      const resolved = await mainnetClient.getEnsAddress({
-        name: normalize(`${user?.username}.fkeydev.eth`),
-      });
-      setAddress(resolved);
-    }
     resolveAddress();
   }, [user]);
 
@@ -43,7 +46,15 @@ function QrCodePage() {
       >
         <X />
       </Button>
-      {!address && <Skeleton className="w-200 h-200" />}
+      <h1 className="text-2xl font-bold">Your QR Code</h1>
+      {loading && (
+        <div className="flex flex-col text-center space-y-4">
+          <div className="flex flex-col space-y-4 bg-[#232324] p-4 rounded-lg mx-auto">
+            <Skeleton className="w-[250px] h-[250px]" />
+          </div>
+          <p>Get paid by sharing this QR code</p>
+        </div>
+      )}
       {address && (
         <div className="flex flex-col text-center space-y-4">
           <div className="flex flex-col space-y-4 bg-[#232324] p-4 rounded-lg mx-auto">

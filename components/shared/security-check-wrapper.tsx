@@ -65,11 +65,11 @@ function SecurityCheckModal({
                 privacy and security.
               </p>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="w-full">
               <Button
                 color="primary"
                 onPress={() => generateKeysAndAuthenticate()}
-                className="font-semibold"
+                className="font-semibold w-full"
                 isLoading={loading}
               >
                 Generate

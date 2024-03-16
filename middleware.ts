@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
       }
     );
   }
-  
+
   try {
     const token = authToken.replace("Bearer ", "");
     const key = await importSPKI(
@@ -48,12 +48,12 @@ export async function middleware(req: NextRequest) {
     return response;
   } catch (error: any) {
     // Handle errors related to token verification or other issues
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: false,
         message: "Authentication failed",
         error: error.message,
-      }),
+      },
       {
         status: 401,
         headers: { "Content-Type": "application/json" },
