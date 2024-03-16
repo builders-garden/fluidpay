@@ -3,7 +3,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 
 export const account = privateKeyToAccount(
-  process.env.WALLET_PRIVATE_KEY! as `0x${string}`
+  `0x${process.env.WALLET_PRIVATE_KEY!}`
 );
 
 export const publicClient = createPublicClient({
