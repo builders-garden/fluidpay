@@ -1,6 +1,11 @@
 "use client";
+<<<<<<< HEAD
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input, Skeleton } from "@nextui-org/react";
+=======
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { Button, Divider, Input, Skeleton } from "@nextui-org/react";
+>>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
 import {
   useAuthenticate,
   useFluidkeyClient,
@@ -56,8 +61,11 @@ export default function Onboarding() {
     isError: isErrorRegisterUser,
   } = useRegisterUser();
 
+<<<<<<< HEAD
   // console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
 
+=======
+>>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
   const generateFluidpayKeys = async () => {
     try {
       setLoading(true);
@@ -129,10 +137,6 @@ export default function Onboarding() {
           <ArrowLeft />
         </Button>
         <h1 className="text-2xl font-bold">Onboarding</h1>
-        <p>
-          Welcome to <span className="font-bold">fluidkey</span>! Complete the
-          onboarding by following the instructions on your device.
-        </p>
         <Skeleton className="w-[64px] h-[12px]" />
       </div>
     );
@@ -153,12 +157,12 @@ export default function Onboarding() {
         <ArrowLeft />
       </Button>
       <h1 className="text-4xl font-bold">Onboarding</h1>
-      <p>
-        Welcome to <span className="font-bold">fluidkey</span>! Complete the
-        onboarding by following the instructions on your device.
-      </p>
       {!keys && (
         <>
+          <p>
+            First, we need you to generate you a pair of keys. This will allow
+            you to use fluidpay in a private and secure way.
+          </p>
           <Button
             color="primary"
             className="font-semibold"
@@ -166,12 +170,16 @@ export default function Onboarding() {
             isLoading={loading}
             onPress={() => generateFluidpayKeys()}
           >
-            Generate fluidpay keys
+            Generate keys
           </Button>
         </>
       )}
       {keys && !isAddressRegistered && (
         <>
+          <p>
+            First time here? Please enter the invite code you received to start
+            using fluidpay.
+          </p>
           <Input
             label="Fluidpay invite code"
             placeholder="ORBULO2024"
@@ -188,12 +196,13 @@ export default function Onboarding() {
             }}
             isDisabled={inviteCode.length !== 6}
           >
-            Register fluidpay user
+            Confirm
           </Button>
         </>
       )}
       {keys && isAddressRegistered && (
         <>
+<<<<<<< HEAD
           {!generatingStealthAddress && (
             <Button
               color="primary"
@@ -212,6 +221,20 @@ export default function Onboarding() {
               Creating fluidpay card...
             </p>
           )}
+=======
+          <p>You&apos;re all set! Let&apos;s get started.</p>
+          <Button
+            color="primary"
+            className="font-semibold"
+            radius="full"
+            onPress={async () => {
+              await authenticate();
+              router.push("/home");
+            }}
+          >
+            Start now!
+          </Button>
+>>>>>>> 80252f5ecabfb28923b91b2338516a4f6bdf8d55
         </>
       )}
     </div>
