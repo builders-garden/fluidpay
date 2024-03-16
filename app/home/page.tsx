@@ -69,7 +69,12 @@ export default function Home() {
                   <p className="font-semibold">Signed in as</p>
                   <p className="font-semibold">{user?.email}</p>
                 </DropdownItem>
-                <DropdownItem key="profile" className="h-14 gap-2">
+                <DropdownItem
+                  key="rewards"
+                  className="h-14 gap-2"
+                  color="danger"
+                  onPress={() => router.push("/rewards")}
+                >
                   <p>Rewards</p>
                 </DropdownItem>
                 <DropdownItem

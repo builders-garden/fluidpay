@@ -99,37 +99,31 @@ export default function Onboarding() {
   }, [isAuthenticated, smartAccountList]);
 
   const createDefaultAccount = async (address: string) => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/accounts`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify({
-          address: address,
-          name: "Account 1",
-          type: AccountType.STANDARD,
-        }),
-      }
-    );
+    fetch(`/api/accounts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        address: address,
+        name: "Account 1",
+        type: AccountType.STANDARD,
+      }),
+    });
   };
 
   const generateDefaultAccount = async () => {
     try {
       setGeneratingStealthAddress(true);
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/accounts`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
+      const res = await fetch(`/api/accounts`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
       const accounts = await res.json();
       if (accounts.length > 0) {
         router.push("/home");

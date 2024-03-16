@@ -1,5 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { initiateSmartContractPlatformClient } from "@circle-fin/smart-contract-platform";
 
 const circleAPIKey = process.env.CIRCLE_API_KEY;
@@ -10,20 +9,29 @@ const circleContractSdk = initiateSmartContractPlatformClient({
   entitySecret: circleSecret!,
 });
 
-export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     // Extract input parameters from request body
-    const { userAddress, tokenId } = req.body;
-    const response = await circleContractSdk.readContract({
-      id: '018e476f-85c5-7ad0-8ec6-1c3259d3e92c', 
+    const { searchParams } = new URL(req.url);
+    const userAddress = req.headers.get("userAddress");
+    const tokenId = searchParams.get("tokenId");
+
+    const { data } = await circleContractSdk.readContract({
+      id: "018e476f-85c5-7ad0-8ec6-1c3259d3e92c",
       abiFunctionSignature: "balanceOf(address, uint256)",
-      abiParameters: [userAddress, tokenId], 
+      abiParameters: [userAddress, tokenId],
     });
     // return encripted data
-    return NextResponse.json({ response: response });
+    return NextResponse.json(data);
     //res.status(200).json({ ciphertext: encryptedData });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error calling mint function:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json(
+      {
+        error: "Error checking token balance",
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 };
