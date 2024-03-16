@@ -1,6 +1,6 @@
 "use client";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { Button, Input, Skeleton } from "@nextui-org/react";
+import { Button, Divider, Input, Skeleton } from "@nextui-org/react";
 import {
   useAuthenticate,
   useFluidkeyClient,
@@ -38,8 +38,6 @@ export default function Onboarding() {
     isLoading: isLoadingRegisterUser,
     isError: isErrorRegisterUser,
   } = useRegisterUser();
-
-  console.log(isAddressRegistered, isErrorRegisterUser, errorRegisterUser);
 
   const generateFluidpayKeys = async () => {
     try {
@@ -86,10 +84,6 @@ export default function Onboarding() {
           <ArrowLeft />
         </Button>
         <h1 className="text-2xl font-bold">Onboarding</h1>
-        <p>
-          Welcome to <span className="font-bold">fluidkey</span>! Complete the
-          onboarding by following the instructions on your device.
-        </p>
         <Skeleton className="w-[64px] h-[12px]" />
       </div>
     );
@@ -110,12 +104,12 @@ export default function Onboarding() {
         <ArrowLeft />
       </Button>
       <h1 className="text-4xl font-bold">Onboarding</h1>
-      <p>
-        Welcome to <span className="font-bold">fluidkey</span>! Complete the
-        onboarding by following the instructions on your device.
-      </p>
       {!keys && (
         <>
+          <p>
+            First, we need you to generate you a pair of keys. This will allow
+            you to use fluidpay in a private and secure way.
+          </p>
           <Button
             color="primary"
             className="font-semibold"
@@ -123,12 +117,16 @@ export default function Onboarding() {
             isLoading={loading}
             onPress={() => generateFluidpayKeys()}
           >
-            Generate fluidpay keys
+            Generate keys
           </Button>
         </>
       )}
       {keys && !isAddressRegistered && (
         <>
+          <p>
+            First time here? Please enter the invite code you received to start
+            using fluidpay.
+          </p>
           <Input
             label="Fluidpay invite code"
             placeholder="ORBULO2024"
@@ -145,12 +143,13 @@ export default function Onboarding() {
             }}
             isDisabled={inviteCode.length !== 6}
           >
-            Register fluidpay user
+            Confirm
           </Button>
         </>
       )}
       {keys && isAddressRegistered && (
         <>
+          <p>You&apos;re all set! Let&apos;s get started.</p>
           <Button
             color="primary"
             className="font-semibold"
