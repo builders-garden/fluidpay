@@ -23,7 +23,7 @@ export default function Home() {
     if (user.newUser || !isAddressRegistered) {
       return redirect("/onboarding");
     } else {
-      return redirect("/dashboard");
+      return redirect("/home");
     }
   }
 

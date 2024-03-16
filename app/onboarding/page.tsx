@@ -61,7 +61,7 @@ export default function Onboarding() {
     try {
       setLoading(true);
       // @ts-ignore
-      await generateKeys(walletClient, "fluidkey");
+      await generateKeys(walletClient, "fluidpay");
     } catch (error) {
       console.error(error);
     } finally {
