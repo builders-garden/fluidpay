@@ -23,6 +23,8 @@ const circleContractSdk = initiateSmartContractPlatformClient({
 
 export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    // Extract input parameters from request body
+    const { addressReceiver, tokenId } = req.body;
     const entitySecret = forge.util.hexToBytes(
         `${circleSecret}`
     );
@@ -45,8 +47,8 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     const response = await circleDeveloperSdk.createContractExecutionTransaction({
         walletId: '39fd2c15-550a-5f6f-beda-1ec1b4260ce0',
         contractAddress: contractAddress,
-        abiFunctionSignature: 'safeMint(address, uint256, uint256)', //TODO: change to the actual function signature
-        abiParameters: ['0x6E5eAf34c73D1CD0be4e24f923b97CF38e10d1f3', 1], // address and token id TODO: change to the actual address and token id
+        abiFunctionSignature: 'safeMint(address, uint256, uint256, bytes)',
+        abiParameters: [addressReceiver, tokenId, 1, "0x"], 
         fee: {
           type: 'level',
           config: {
