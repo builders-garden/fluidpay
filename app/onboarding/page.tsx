@@ -129,6 +129,7 @@ export default function Onboarding() {
       setGeneratingStealthAddress(true);
 
       const EOA = getEOA(fluidkeyClient!);
+      const stealthAddress = predictStealthAddress(fluidkeyClient!);
 
       const smartAccountClient = await getSmartAccountClient(
         walletClient,
@@ -139,7 +140,6 @@ export default function Onboarding() {
 
       await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
 
-      const stealthAddress = predictStealthAddress(fluidkeyClient!);
       await createDefaultAccount(stealthAddress);
       router.push("/home");
     } catch (error) {
