@@ -27,8 +27,9 @@ export default function Home() {
   );
   const { isAuthenticated: isFkeyAuthenticated } = useAuthenticate();
 
-  if (user) {
+  if (user && isFullyConnected) {
     if (user.newUser || !isAddressRegistered) {
+      console.log("HERE");
       return redirect("/onboarding");
     } else if (isAuthenticated) {
       return redirect("/home");

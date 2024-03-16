@@ -8,6 +8,7 @@ import { createConfig, WagmiProvider } from "wagmi";
 import { http } from "viem";
 import { base } from "viem/chains";
 import { FluidkeyClient, FluidkeyProvider } from "@sefu/react-sdk";
+import SecurityCheckWrapper from "./security-check-wrapper";
 
 const sefuClient = new FluidkeyClient({
   clientId: process.env.NEXT_PUBLIC_FLUIDKEY_APP_ID!,
@@ -45,7 +46,9 @@ export default function Providers(props: { children: ReactNode }) {
       >
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
-            <DynamicWagmiConnector>{props.children}</DynamicWagmiConnector>
+            <DynamicWagmiConnector>
+              <SecurityCheckWrapper>{props.children}</SecurityCheckWrapper>
+            </DynamicWagmiConnector>
           </QueryClientProvider>
         </WagmiProvider>
       </DynamicContextProvider>
