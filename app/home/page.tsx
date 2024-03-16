@@ -16,6 +16,7 @@ import {
 } from "@sefu/react-sdk";
 import { CreditCard, Download, Plus, QrCode, Search, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { base } from "viem/chains";
 import { useDisconnect } from "wagmi";
 
 export default function Home() {
@@ -28,9 +29,8 @@ export default function Home() {
     smartAccountList !== undefined ? smartAccountList[0] : null;
   const { data: balanceData } = useGetSmartAccountBalance({
     idSmartAccount: mainAccount?.idSmartAccount || "",
-    chainId: 8453,
+    chainId: base.id,
   });
-  console.log(balanceData);
 
   const { reset } = useResetClient();
 
