@@ -10,12 +10,19 @@ import { useDisconnect, useConnect, useAccount } from "wagmi";
 export default function Home() {
   const { status, address } = useAccount();
   const { disconnect } = useDisconnect();
-  const { walletConnector, isAuthenticated, isFullyConnected, user } =
-    useDynamicContext();
+  const {
+    walletConnector,
+    isAuthenticated,
+    isFullyConnected,
+    user,
+    authToken,
+  } = useDynamicContext();
   const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const { isAddressRegistered } = useIsAddressRegistered(
     address as `0x${string}`
   );
+
+  console.log(authToken);
 
   console.log(user);
 
