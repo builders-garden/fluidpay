@@ -22,12 +22,12 @@ import {
   useWalletClient,
 } from "wagmi";
 import "@/app/polyfills";
-import { generateEphemeralPrivateKey } from "@fluidkey/stealth-account-kit";
-import { privateKeyToAccount } from "viem/accounts";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
-import { AccountType } from "@/lib/db/accounts";
+import { AccountType } from "@/lib/db/interfaces";
 import { getEOA, predictStealthAddress } from "@/lib/eoa";
+import { supabase } from "@/lib/supabase";
+import { getUserAccounts } from "@/lib/db/accounts";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -38,7 +38,6 @@ export default function Onboarding() {
   const fluidkeyClient = useFluidkeyClient();
   const keys = fluidkeyClient?.areMetaStealthKeysInitialized();
   const { user } = useDynamicContext();
-  const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const initializedWalletAddress = useInitializedWalletAddress();
   const { isAddressRegistered, refetch: refetchRegistration } =
     useIsAddressRegistered(address);
@@ -128,7 +127,14 @@ export default function Onboarding() {
     try {
       setGeneratingStealthAddress(true);
 
-      const EOA = getEOA(fluidkeyClient!, 1);
+      const accounts = await getUserAccounts(user?.username!);
+      console.log(accounts);
+      if (accounts.length > 0) {
+        router.push("/home");
+        return;
+      }
+
+      const EOA = getEOA(fluidkeyClient!, 0);
       const stealthAddress = predictStealthAddress(fluidkeyClient!);
 
       const smartAccountClient = await getSmartAccountClient(

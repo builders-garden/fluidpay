@@ -31,6 +31,7 @@ export default function Home() {
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
   });
+  console.log(balanceData);
 
   const { reset } = useResetClient();
 

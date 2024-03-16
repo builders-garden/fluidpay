@@ -1,20 +1,6 @@
-import { supabase, supabaseAdmin } from "../supabase";
-
-export enum AccountType {
-  STANDARD = "standard",
-  USDC_CENTRIC = "usdc_centric",
-  SAVE_AND_EARN = "save_and_earn",
-  GNOSIS_PAY = "gnosis_pay",
-}
-
-export interface Account {
-  id: string;
-  slug: string;
-  address: string;
-  owner_username: string;
-  name: string;
-  type: AccountType;
-}
+import { supabase } from "../supabase";
+import { supabaseAdmin } from "../supabase-admin";
+import { Account } from "./interfaces";
 
 export const upsertAccount = async (account: Omit<Account, "id">) => {
   const { data, error } = await supabaseAdmin.from("accounts").upsert(account, {
@@ -27,6 +13,7 @@ export const upsertAccount = async (account: Omit<Account, "id">) => {
 };
 
 export const getUserAccounts = async (username: string) => {
+  console.log("username", username);
   const { data, error } = await supabase
     .from("accounts")
     .select("*")
@@ -34,6 +21,7 @@ export const getUserAccounts = async (username: string) => {
   if (error) {
     throw error;
   }
+  console.log("data", data);
   return data;
 };
 

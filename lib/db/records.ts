@@ -1,13 +1,6 @@
-import { supabase, supabaseAdmin } from "../supabase";
-
-export interface Record {
-  id: string;
-  owner: string;
-  name: string;
-  contenthash: string;
-  addresses?: string[];
-  text: string;
-}
+import { supabase } from "../supabase";
+import { supabaseAdmin } from "../supabase-admin";
+import { Record } from "./interfaces";
 
 export const getRecord = async (id: string) => {
   const { data, error } = await supabase
