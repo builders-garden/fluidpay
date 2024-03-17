@@ -13,10 +13,12 @@ import {
   useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
+  useResetClient,
 } from "@sefu/react-sdk";
 import { Lock } from "lucide-react";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
-import { useWalletClient } from "wagmi";
+import { useDisconnect, useWalletClient } from "wagmi";
 
 function SecurityCheckModal({
   isOpen,
@@ -26,9 +28,21 @@ function SecurityCheckModal({
   onOpenChange: () => void;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
+  const pathname = usePathname();
+  const { user } = useDynamicContext();
   const { authenticate } = useAuthenticate();
   const { data: walletClient } = useWalletClient();
   const { generateKeys } = useGenerateKeys();
+  const { disconnect } = useDisconnect();
+  const { reset } = useResetClient();
+  const router = useRouter();
+
+  const resetClient = () => {
+    onOpenChange();
+    reset();
+    disconnect();
+    router.push("/");
+  };
 
   const generateKeysAndAuthenticate = async () => {
     setLoading(true);
@@ -43,6 +57,12 @@ function SecurityCheckModal({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user && pathname !== "/") {
+      redirect("/");
+    }
+  }, [user, pathname]);
 
   return (
     <Modal
@@ -66,6 +86,14 @@ function SecurityCheckModal({
               </p>
             </ModalBody>
             <ModalFooter className="w-full">
+              <Button
+                color="danger"
+                onPress={() => resetClient()}
+                className="font-semibold w-full"
+                variant="ghost"
+              >
+                Logout
+              </Button>
               <Button
                 color="primary"
                 onPress={() => generateKeysAndAuthenticate()}
