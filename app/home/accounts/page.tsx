@@ -1,9 +1,5 @@
 "use client";
-import {
-  createWalletClientFromWallet,
-  getAuthToken,
-  useDynamicContext,
-} from "@dynamic-labs/sdk-react-core";
+import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
   Button,
   Input,
@@ -93,8 +89,7 @@ function AccountsPage() {
         publicClient
       );
       console.log(lifiRes?.to, lifiRes?.data);
-      
-      await safeSmartAccountClient.sendTransaction();
+
       await safeSmartAccountClient.sendTransaction(lifiRes);
     } catch (e) {
       console.error(e);
