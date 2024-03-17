@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/logo.png" sizes="any" />
+      </head>
       <body className={raleway.className}>
         <Providers>
           <main className="max-w-[430px] mx-auto border-x w-full h-screen border-[#232324] overflow-y-scroll">

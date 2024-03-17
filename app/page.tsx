@@ -41,9 +41,10 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center h-full space-y-8">
-      <h1 className="font-bold text-7xl">
+      <img src="/logo.png" alt="fluidpay" className="w-64" />
+      {/* <h1 className="font-bold text-7xl">
         <span className="text-primary">fluid</span>pay
-      </h1>
+      </h1> */}
       <DynamicConnectButton buttonClassName="bg-primary px-4 py-2 rounded-lg font-semibold">
         Enter
       </DynamicConnectButton>
