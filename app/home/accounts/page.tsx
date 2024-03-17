@@ -39,7 +39,7 @@ function AccountsPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const jwt = getAuthToken();
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
   useEffect(() => {
