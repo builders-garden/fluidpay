@@ -106,7 +106,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   return NextResponse.json(enrichedAccounts);
 };
 
-export const enrichAccountsWithBalances = async (accounts: Account[]) => {
+const enrichAccountsWithBalances = async (accounts: Account[]) => {
   const tokenBalances = await fetchUSDCTokenBalances(
     accounts.map((a) => a.address)
   );
