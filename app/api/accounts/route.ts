@@ -33,10 +33,12 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   // save ens subdomain record
   await upsertRecord({
     owner: username!,
-    name: `${slug}.${username}`,
+    name: `${slug}.${username}.fluidpay.eth`,
     contenthash: "",
-    text: "",
-    addresses: [address],
+    texts: "",
+    addresses: {
+      60: address as `0x${string}`,
+    },
   });
   return NextResponse.json(newAccount);
 };
