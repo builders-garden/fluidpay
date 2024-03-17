@@ -24,7 +24,6 @@ import "@/app/polyfills";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
 import { AccountType } from "@/lib/db/interfaces";
-import { getEOA, predictStealthAddress } from "@/lib/eoa";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -127,19 +126,25 @@ export default function Onboarding() {
         return;
       }
 
-      const EOA = getEOA(fluidkeyClient!, 0);
-      const stealthAddress = predictStealthAddress(fluidkeyClient!);
-
       const smartAccountClient = await getSmartAccountClient(
         walletClient,
         publicClient
       );
 
-      await deployFluidKeyStealthAddress(address!, smartAccountClient);
+      const result = await deployFluidKeyStealthAddress(
+        address!,
+        // @ts-ignore
+        walletClient,
+        smartAccountClient,
+        {
+          isUSDCCentric: false,
+          isSaveAndEarn: false,
+        }
+      );
 
       await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
 
-      await createDefaultAccount(stealthAddress);
+      await createDefaultAccount(result);
       router.push("/home");
     } catch (error) {
       console.error(error);
