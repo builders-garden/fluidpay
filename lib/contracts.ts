@@ -163,18 +163,30 @@ export const crossChainDepositOnGnosisPay = async (
     walletClient,
     publicClient
   );
-  const eureContract = getContract({
-    address: EURE_TOKEN_ADDRESS,
+  const usdcContract = getContract({
+    address: USDC_TOKEN_ADDRESS,
     abi: erc20Abi,
     client: {
       public: publicClient,
       wallet: safeSmartAccountClient,
     },
   });
-  const approveHash = await eureContract.write.approve([
+  const allowance = await usdcContract.read.allowance([
+    safeSmartAccount.address,
     lifiRes?.to as `0x${string}`,
-    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" as any,
   ]);
-  const txHash = await safeSmartAccountClient.sendTransaction(lifiRes as any);
-  console.log(txHash);
+  if (allowance <= 0) {
+    const approveHash = await usdcContract.write.approve([
+      lifiRes?.to as `0x${string}`,
+      "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" as any,
+    ]);
+    console.log("approve hash", approveHash);
+  }
+  console.log("lifiRes", lifiRes);
+  const txHash = await safeSmartAccountClient.sendTransaction({
+    to: lifiRes?.to as `0x${string}`,
+    value: "0",
+    data: lifiRes?.data,
+  } as any);
+  console.log("transfer hash", txHash);
 };

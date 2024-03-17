@@ -1,4 +1,4 @@
-import { LiFi, Token } from "@lifi/sdk";
+import { LiFi, RouteOptions, Token } from "@lifi/sdk";
 import { parseUnits } from "viem";
 import { base, gnosis } from "viem/chains";
 
@@ -13,7 +13,7 @@ export interface WalletBalance {
 
 export const USDC_TOKEN_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
-const routeOptions: any = {
+const routeOptions: RouteOptions = {
   slippage: 3 / 100, // 0.03%
   order: "RECOMMENDED",
   allowSwitchChain: false,
@@ -60,6 +60,7 @@ export async function getBridgeTransaction(
     options: routeOptions,
   };
   const { routes } = await lifi.getRoutes(routesRequest);
+  console.log(routesRequest, routes);
   if (routes.length > 0) {
     const [route] = routes;
     const stepTransactionData = await lifi.getStepTransaction(route.steps[0]);
