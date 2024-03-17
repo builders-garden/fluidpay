@@ -90,6 +90,7 @@ function AccountsPage() {
       );
       console.log(lifiRes?.to, lifiRes?.data);
 
+      // @ts-ignore
       await safeSmartAccountClient.sendTransaction(lifiRes);
     } catch (e) {
       console.error(e);
