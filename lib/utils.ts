@@ -2,9 +2,8 @@ export const formatBigInt = (
   value: string | number | bigint,
   units: number
 ) => {
-  return parseFloat(
-    (BigInt(value) / BigInt(10 ** units)).toLocaleString()
-  ).toFixed(2);
+  const result = BigInt(value) / BigInt(10 ** (units - 2));
+  return (Number(result) / 100).toFixed(2);
 };
 
 export const formatAddress = (address: string) => {

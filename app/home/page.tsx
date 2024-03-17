@@ -41,7 +41,7 @@ export default function Home() {
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
   });
-  const { data, loadMore, moreDataToLoad, refetch } =
+    const { data, loadMore, moreDataToLoad, refetch } =
     useGetSmartAccountTransfers({
       idSmartAccount: mainAccount?.idSmartAccount || "",
       chainId: base.id,
@@ -55,8 +55,6 @@ export default function Home() {
     disconnect();
     router.push("/");
   };
-
-  console.log(data);
 
   useEffect(() => {
     if (user && fkeyUser) generateNewStealthAddress();
