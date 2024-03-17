@@ -3,7 +3,7 @@ import { parseUnits } from "viem";
 import { base, gnosis } from "viem/chains";
 
 export const lifi = new LiFi({
-  integrator: "Builders Garden X FluidKey",
+  integrator: "BuildersGarden",
 });
 
 export interface WalletBalance {
@@ -17,6 +17,7 @@ const routeOptions: any = {
   slippage: 3 / 100, // 0.03%
   order: "RECOMMENDED",
   allowSwitchChain: false,
+  integrator: "BuildersGarden",
 };
 
 export async function getWalletBalances(

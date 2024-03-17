@@ -1,6 +1,18 @@
 "use client";
-import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { Button, cn } from "@nextui-org/react";
+import {
+  createWalletClientFromWallet,
+  getAuthToken,
+  useDynamicContext,
+} from "@dynamic-labs/sdk-react-core";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  cn,
+} from "@nextui-org/react";
 import {
   useGetSmartAccountTransfers,
   useGetUserSmartAccounts,
@@ -11,6 +23,10 @@ import { useEffect, useState } from "react";
 import { formatAddress } from "@/lib/utils";
 import { base } from "viem/chains";
 import Transfers from "@/components/transfers";
+import { getBridgeTransaction } from "@/lib/lifi";
+import { usePublicClient, useWalletClient } from "wagmi";
+import { getSmartAccountClient } from "@/lib/smart-accounts";
+import "@/app/polyfills";
 
 const bgColors = [
   "bg-yellow-500",
@@ -37,10 +53,16 @@ function AccountsPage() {
     polling: true,
   });
   const [accounts, setAccounts] = useState<any[]>([]);
+  const { data: walletClient } = useWalletClient();
   const jwt = getAuthToken();
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [showDepositOnGnosisPay, setShowDepositOnGnosisPay] =
+    useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [depositAmount, setDepositAmount] = useState<string>("");
+  const publicClient = usePublicClient();
 
   useEffect(() => {
     fetchAccounts();
@@ -56,6 +78,30 @@ function AccountsPage() {
 
     const jsonResult = await res.json();
     setAccounts(jsonResult);
+  };
+
+  const depositOnGnosisPay = async () => {
+    setLoading(true);
+    try {
+      const lifiRes = await getBridgeTransaction(
+        depositAmount,
+        selectedCard.address,
+        walletClient?.account.address!
+      );
+      const safeSmartAccountClient = await getSmartAccountClient(
+        walletClient,
+        publicClient
+      );
+      console.log(lifiRes?.to, lifiRes?.data);
+      
+      await safeSmartAccountClient.sendTransaction();
+      await safeSmartAccountClient.sendTransaction(lifiRes);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+      setShowDepositOnGnosisPay(false);
+    }
   };
 
   if (selectedCard) {
@@ -177,6 +223,19 @@ function AccountsPage() {
               </Button>
               <p className="font-bold">Settings</p>
             </div>
+            {selectedCard.type === "gnosis_pay" && (
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <Button
+                  isIconOnly
+                  radius="full"
+                  size="lg"
+                  onPress={() => setShowDepositOnGnosisPay(true)}
+                >
+                  <Plus />
+                </Button>
+                <p className="font-bold">Deposit</p>
+              </div>
+            )}
           </div>
           <div className="flex flex-col space-y-2 bg-[#232324] rounded-xl p-4 mx-4 mt-12 max-h-[300px] overflow-y-scroll">
             <Transfers
@@ -190,6 +249,39 @@ function AccountsPage() {
             />
           </div>
         </div>
+        {showDepositOnGnosisPay && (
+          <Modal
+            backdrop={"blur"}
+            isOpen={showDepositOnGnosisPay}
+            onClose={() => setShowDepositOnGnosisPay(false)}
+            isDismissable={false}
+          >
+            <ModalContent>
+              <ModalBody>
+                <div className="flex flex-col items-center justify-center pt-4 space-y-2">
+                  Deposit to Gnosis Pay
+                </div>
+                <Input
+                  label="Amount"
+                  placeholder="Enter amount"
+                  type="number"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+              </ModalBody>
+              <ModalFooter className="w-full">
+                <Button
+                  color="primary"
+                  onPress={() => depositOnGnosisPay()}
+                  className="font-semibold w-full"
+                  isLoading={loading}
+                >
+                  Deposit
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        )}
       </div>
     );
   }
