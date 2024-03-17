@@ -60,7 +60,7 @@ export default function PayUsername({
         transport: http(),
       });
       const resolved = await mainnetClient.getEnsAddress({
-        name: normalize(`${params.username}.fkeydev.eth`),
+        name: normalize(`${params.username}.fluidpay.eth`),
       });
       setAddress(resolved);
     }
@@ -70,7 +70,7 @@ export default function PayUsername({
   if (!params.username) {
     return <div>User not found</div>;
   }
-  const username = `${params.username}.fkeydev.eth`;
+  const username = `${params.username}.fluidpay.eth`;
 
   return (
     <div className="flex flex-col p-4 space-y-4">
