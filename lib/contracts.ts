@@ -161,6 +161,7 @@ export const crossChainDepositOnGnosisPay = async (
     walletClient,
     publicClient
   );
+
   const eureContract = getContract({
     address: EURE_TOKEN_ADDRESS,
     abi: erc20Abi,
