@@ -1,9 +1,5 @@
-// api/circle-wallet/route.ts
-
-import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
-import forge from "node-forge";
 import { numberToBytes } from "viem";
 
 const circleAPIKey = process.env.CIRCLE_API_KEY;

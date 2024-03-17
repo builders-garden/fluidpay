@@ -1,13 +1,10 @@
-// api/circle-wallet/route.ts
-
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import forge from "node-forge";
 
 const circleSecret = process.env.CIRCLE_SECRET as string;
 const circlePublicKey = process.env.CIRCLE_PUBLIC_KEY as string;
 
-export const GET = (req: NextApiRequest, res: NextApiResponse) => {
+export const GET = (req: NextRequest, res: NextResponse) => {
   try {
     // Extract input parameters from request body
     const entitySecret = forge.util.hexToBytes(`${circleSecret}`);
@@ -23,6 +20,9 @@ export const GET = (req: NextApiRequest, res: NextApiResponse) => {
     return NextResponse.json({ encryptedData64: encryptedData64 });
   } catch (error) {
     console.error("Error calling mint function:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 };
