@@ -1,7 +1,5 @@
 "use client";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
-import { getEOA, predictStealthAddress } from "@/lib/eoa";
-import { getGnosisPayModules } from "@/lib/gnosis-pay-delay-module";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input } from "@nextui-org/react";
@@ -300,20 +298,9 @@ function CreateAccountPage() {
         className="font-semibold"
         radius="full"
         isLoading={loading}
-<<<<<<< HEAD
-        onPress={() => createAccount()}
-=======
         onPress={() =>
-          accountType === "gnosis_pay"
-            ? linkGnosisPayCard()
-            : signMessage({
-                message: fluidkeyMessage(
-                  walletClient?.account.address!,
-                  "1234"
-                ),
-              })
+          accountType === "gnosis_pay" ? linkGnosisPayCard() : createAccount()
         }
->>>>>>> 63f071ad9dc72a063fb4f01c28f3dc9517a12fb4
       >
         {accountType === "gnosis_pay" ? "Connect Gnosis Pay" : "Create"}
       </Button>
