@@ -2,7 +2,7 @@
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, cn } from "@nextui-org/react";
 import {
-  useGetSmartAccountTransfers,
+    useGetSmartAccountTransfers,
   useGetUserSmartAccounts,
 } from "@sefu/react-sdk";
 import { ArrowLeft, Cog, Copy, Eye, EyeOff, Plus, X } from "lucide-react";

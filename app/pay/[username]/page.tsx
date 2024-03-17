@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 export default function PayUsername({
@@ -20,6 +20,7 @@ export default function PayUsername({
   const [amount, setAmount] = useState<number | null>(
     predefinedAmount ? parseFloat(predefinedAmount) : null
   );
+  const router = useRouter();
 
   useEffect(() => {
     async function resolveAddress() {
@@ -50,8 +51,7 @@ export default function PayUsername({
             radius="full"
             isIconOnly
             onPress={() => {
-              // TODO: uncomment
-              // router.back();
+              router.back();
             }}
           >
             <ArrowLeft />
