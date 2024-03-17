@@ -1,3 +1,4 @@
+import { abiErc20 } from "@/lib/abi-erc20";
 import { fetchUSDCTokenBalances } from "@/lib/airstack";
 import { getUserAccounts, upsertAccount } from "@/lib/db/accounts";
 import { Account, AccountType } from "@/lib/db/interfaces";
@@ -73,20 +74,10 @@ export const enrichAccountsWithBalances = async (accounts: Account[]) => {
     const result = await gnosisPublicClient.readContract({
       address: EURE_TOKEN_ADDRESS,
       functionName: "balanceOf",
-      abi: [
-        {
-          inputs: [
-            { internalType: "address", name: "account", type: "address" },
-          ],
-          name: "balanceOf",
-          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
+      abi: abiErc20,
       args: [gnosisPayAccount.address as `0x${string}`],
     });
-    gnosisPayAccountBalance = formatBigInt(result, 18);
+    gnosisPayAccountBalance = formatBigInt(result as any, 18);
   }
 
   return accounts.map((a) => {
