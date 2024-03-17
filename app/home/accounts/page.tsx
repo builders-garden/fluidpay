@@ -19,10 +19,9 @@ import { useEffect, useState } from "react";
 import { formatAddress } from "@/lib/utils";
 import { base } from "viem/chains";
 import Transfers from "@/components/transfers";
-import { getBridgeTransaction } from "@/lib/lifi";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { getSmartAccountClient } from "@/lib/smart-accounts";
 import "@/app/polyfills";
+import { crossChainDepositOnGnosisPay } from "@/lib/contracts";
 
 const bgColors = [
   "bg-yellow-500",
@@ -79,19 +78,11 @@ function AccountsPage() {
   const depositOnGnosisPay = async () => {
     setLoading(true);
     try {
-      const lifiRes = await getBridgeTransaction(
+      await crossChainDepositOnGnosisPay(
         depositAmount,
         selectedCard.address,
-        walletClient?.account.address!
+        walletClient
       );
-      const safeSmartAccountClient = await getSmartAccountClient(
-        walletClient,
-        publicClient
-      );
-      console.log(lifiRes?.to, lifiRes?.data);
-
-      // @ts-ignore
-      await safeSmartAccountClient.sendTransaction(lifiRes);
     } catch (e) {
       console.error(e);
     } finally {

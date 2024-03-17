@@ -14,7 +14,12 @@ import {
 } from "viem";
 import { publicClient } from "./config";
 import "@/app/polyfills";
-import { USDC_TOKEN_ADDRESS } from "./lifi";
+import {
+  EURE_TOKEN_ADDRESS,
+  USDC_TOKEN_ADDRESS,
+  getBridgeTransaction,
+} from "./lifi";
+import { getSmartAccountClient } from "./smart-accounts";
 
 export const deployFluidKeyStealthAddress = async (
   address: `0x${string}`,
@@ -140,4 +145,35 @@ export const deployFluidKeyStealthAddress = async (
   }
 
   return stealthAddress;
+};
+
+export const crossChainDepositOnGnosisPay = async (
+  amount: string,
+  receiver: string,
+  walletClient: any
+) => {
+  const lifiRes = await getBridgeTransaction(
+    amount,
+    receiver,
+    walletClient?.account!.address
+  );
+  const safeSmartAccountClient = await getSmartAccountClient(
+    walletClient,
+    publicClient
+  );
+  const eureContract = getContract({
+    address: EURE_TOKEN_ADDRESS,
+    abi: erc20Abi,
+    client: {
+      public: publicClient,
+      wallet: safeSmartAccountClient,
+    },
+  });
+  const approveHash = await eureContract.write.approve([
+    lifiRes?.to,
+    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  ]);
+  console.log(lifiRes?.to, lifiRes?.data);
+  const txHash = await safeSmartAccountClient.sendTransaction(lifiRes);
+  console.log(txHash);
 };
