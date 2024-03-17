@@ -170,10 +170,10 @@ export const crossChainDepositOnGnosisPay = async (
     },
   });
   const approveHash = await eureContract.write.approve([
-    lifiRes?.to,
-    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    lifiRes?.to as `0x${string}`,
+    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" as any,
   ]);
   console.log(lifiRes?.to, lifiRes?.data);
-  const txHash = await safeSmartAccountClient.sendTransaction(lifiRes);
+  const txHash = await safeSmartAccountClient.sendTransaction(lifiRes as any);
   console.log(txHash);
 };

@@ -10,6 +10,8 @@ import {
   cn,
 } from "@nextui-org/react";
 import {
+  useConfirmTransferOut,
+  useGenerateTransferOutQuote,
   useGetSmartAccountTransfers,
   useGetUserSmartAccounts,
 } from "@sefu/react-sdk";
@@ -19,11 +21,9 @@ import { useEffect, useState } from "react";
 import { formatAddress } from "@/lib/utils";
 import { base } from "viem/chains";
 import Transfers from "@/components/transfers";
-import { EURE_TOKEN_ADDRESS, getBridgeTransaction } from "@/lib/lifi";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { getSmartAccountClient } from "@/lib/smart-accounts";
+import { getSmartAccount, getSmartAccountClient } from "@/lib/smart-accounts";
 import "@/app/polyfills";
-import { erc20Abi, getContract } from "viem";
 import { crossChainDepositOnGnosisPay } from "@/lib/contracts";
 
 const bgColors = [
@@ -43,6 +43,8 @@ function AccountsPage() {
   const router = useRouter();
   const { user } = useDynamicContext();
   const { smartAccountList } = useGetUserSmartAccounts();
+  const { data: transferQuote, requestQuote } = useGenerateTransferOutQuote();
+  const { confirmTransferOut } = useConfirmTransferOut();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
   const { data } = useGetSmartAccountTransfers({
@@ -61,6 +63,22 @@ function AccountsPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [depositAmount, setDepositAmount] = useState<string>("");
   const publicClient = usePublicClient();
+
+  const transferToSafeSmartAccount = async () => {
+    const safeAccount = await getSmartAccount(walletClient, publicClient);
+    const quote = await requestQuote({
+      amount: BigInt(depositAmount!) * BigInt(10 ** 6),
+      to: safeAccount.address,
+      idSmartAccount: mainAccount?.idSmartAccount || "",
+      chainId: base.id,
+      idToken: process.env.NEXT_PUBLIC_USDC_TOKEN_ID!,
+      epochControlStructure: 0,
+    });
+
+    const confirmedQuote = await confirmTransferOut({
+      idWithdrawalProcedure: quote?.withdrawalProcedure?.idWithdrawalProcedure!,
+    });
+  };
 
   useEffect(() => {
     fetchAccounts();
@@ -81,6 +99,9 @@ function AccountsPage() {
   const depositOnGnosisPay = async () => {
     setLoading(true);
     try {
+      console.log("Transfering USDC to Safe Smart Account")
+      await transferToSafeSmartAccount();
+      console.log("Depositing to Gnosis Pay")
       await crossChainDepositOnGnosisPay(
         depositAmount,
         selectedCard.address,

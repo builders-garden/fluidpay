@@ -8,20 +8,23 @@ import { base } from "viem/chains";
 import { bundlerClient, paymasterClient } from "./pimlico";
 import { signerToSafeSmartAccount } from "permissionless/accounts";
 
-export const getSmartAccountClient = async (
-  walletClient: any,
-  publicClient: any
-) => {
-  // @ts-ignore
+export const getSmartAccount = async (walletClient: any, publicClient: any) => {
   const customSigner = walletClientToSmartAccountSigner(walletClient);
 
   // @ts-ignore
-  const safeAccount = await signerToSafeSmartAccount(publicClient, {
+  return await signerToSafeSmartAccount(publicClient, {
     entryPoint: ENTRYPOINT_ADDRESS_V06,
     signer: customSigner,
     saltNonce: BigInt(0), // optional
     safeVersion: "1.4.1",
   });
+}
+
+export const getSmartAccountClient = async (
+  walletClient: any,
+  publicClient: any
+) => {
+  const safeAccount = await getSmartAccount(walletClient, publicClient);
   return createSmartAccountClient({
     account: safeAccount,
     entryPoint: ENTRYPOINT_ADDRESS_V06,
