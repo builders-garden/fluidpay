@@ -158,7 +158,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4">
+        <div className="flex flex-col space-y-2 bg-[#161618] rounded-xl p-4 max-h-[300px] overflow-y-scroll">
           <Transfers transfers={data || []} />
         </div>
       </div>
