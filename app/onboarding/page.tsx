@@ -241,7 +241,6 @@ export default function Onboarding() {
             radius="full"
             onPress={async () => {
               await authenticate();
-              generateDefaultAccount();
               // router.push("/home");
             }}
             isLoading={isAuthenticateLoading || generatingStealthAddress}

@@ -28,14 +28,12 @@ export default function Home() {
   const { isAuthenticated: isFkeyAuthenticated } = useAuthenticate();
 
   console.log(isFullyConnected, user, fkeyUser);
-  if (user && isFkeyAuthenticated) {
+  if (user) {
     console.log(user.newUser || !isAddressRegistered);
     if (user.newUser || !isAddressRegistered) {
       return redirect("/onboarding");
-    } else if (isAuthenticated) {
+    } else if (isAuthenticated && isFkeyAuthenticated) {
       return redirect("/home");
-    } else {
-      return redirect("/security-check");
     }
   }
 
