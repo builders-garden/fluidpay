@@ -173,7 +173,6 @@ export const crossChainDepositOnGnosisPay = async (
     lifiRes?.to as `0x${string}`,
     "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" as any,
   ]);
-  console.log(lifiRes?.to, lifiRes?.data);
   const txHash = await safeSmartAccountClient.sendTransaction(lifiRes as any);
   console.log(txHash);
 };

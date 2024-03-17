@@ -11,7 +11,6 @@ export default function Rewards() {
   const router = useRouter();
   const { data: walletClient } = useWalletClient();
   const [balance, setBalance] = useState(0);
-  console.log(balance);
   useEffect(() => {
     fetch(
       `/api/circle-token-balance?userAddress=${walletClient?.account.address}&tokenId=1`,
@@ -26,7 +25,6 @@ export default function Rewards() {
       .then((res) => res.json())
       .then((data: any) => {
         setBalance(data.outputValues[0]);
-        console.log(data.outputValues, balance);
       });
   }, []);
 

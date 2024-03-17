@@ -35,7 +35,6 @@ export async function getWalletBalance(
   tokenAddress = USDC_TOKEN_ADDRESS
 ): Promise<WalletBalance> {
   const token = await lifi.getToken(chainId, tokenAddress);
-  console.log(token);
   const balancesResult = await lifi.getTokenBalance(address, token);
   return {
     address,
