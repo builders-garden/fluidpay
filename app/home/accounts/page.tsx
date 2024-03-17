@@ -76,7 +76,7 @@ function AccountsPage() {
           </Button>
           <div className="flex flex-col items-center justify-center mt-4">
             <div
-              className={`${bgColors[selectedIndex]} rounded-xl h-[202px] w-[357px] flex flex-col justify-between p-4`}
+              className={`${bgColors[selectedIndex || 0]} rounded-xl h-[202px] w-[357px] flex flex-col justify-between p-4`}
             >
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-col space-y-1">
