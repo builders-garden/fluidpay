@@ -19,6 +19,8 @@ export interface Record {
   owner: string;
   name: string;
   contenthash: string;
-  addresses?: string[];
-  text: string;
+  addresses?: {
+    [key: string]: `0x${string}`;
+  };
+  texts: string;
 }

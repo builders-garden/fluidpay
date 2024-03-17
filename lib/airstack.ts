@@ -37,7 +37,6 @@ interface Error {
 }
 
 export const fetchUSDCTokenBalances = async (addresses: string[]) => {
-  console.log("fetching token balances", addresses);
   const { data, error }: QueryResponse = await fetchQuery(query, {
     addresses,
   });

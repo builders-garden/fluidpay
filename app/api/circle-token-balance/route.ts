@@ -15,7 +15,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     const { searchParams } = new URL(req.url);
     const userAddress = searchParams.get("userAddress");
     const tokenId = searchParams.get("tokenId");
-    console.log([userAddress, tokenId]);
     const { data } = await circleContractSdk.readContract({
       id: "018e476f-85c5-7ad0-8ec6-1c3259d3e92c",
       abiFunctionSignature: "balanceOf(address, uint256)",

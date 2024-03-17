@@ -12,6 +12,19 @@ import { formatAddress } from "@/lib/utils";
 import { base } from "viem/chains";
 import Transfers from "@/components/transfers";
 
+const bgColors = [
+  "bg-yellow-500",
+  "bg-green-500",
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-indigo-500",
+  "bg-purple-500",
+  "bg-pink-500",
+  "bg-gray-500",
+  "bg-blue-gray-500",
+  "bg-cyan-500",
+];
+
 function AccountsPage() {
   const router = useRouter();
   const { user } = useDynamicContext();
@@ -27,6 +40,7 @@ function AccountsPage() {
   const jwt = getAuthToken();
   console.log("JWT", jwt);
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
   useEffect(() => {
@@ -62,7 +76,9 @@ function AccountsPage() {
             <ArrowLeft />
           </Button>
           <div className="flex flex-col items-center justify-center mt-4">
-            <div className="bg-emerald-500 rounded-xl h-[202px] w-[357px] flex flex-col justify-between p-4">
+            <div
+              className={`${bgColors[selectedIndex || 0]} rounded-xl h-[202px] w-[357px] flex flex-col justify-between p-4`}
+            >
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-col space-y-1">
                   <p className="text-white text-xl font-bold leading-none">
@@ -199,12 +215,15 @@ function AccountsPage() {
       </p>
       {accounts.length > 0 && (
         <div className="bg-[#D9D9D9] bg-opacity-10 rounded-lg flex flex-col space-y-4 p-2">
-          {accounts.map((account) => (
+          {accounts.map((account, index) => (
             <Button
               className="flex flex-row items-center justify-between p-4 py-6"
               key={account.id}
               variant="light"
-              onPress={() => setSelectedCard(account)}
+              onPress={() => {
+                setSelectedCard(account);
+                setSelectedIndex(index);
+              }}
               // radius="none"
             >
               <div className="flex flex-row items-center space-x-2">
@@ -217,7 +236,10 @@ function AccountsPage() {
                   />
                 ) : (
                   <div
-                    className={cn(`h-[35px] w-[56px] rounded-md`, `bg-red-500`)}
+                    className={cn(
+                      `h-[35px] w-[56px] rounded-md`,
+                      `${bgColors[index % 10]}`
+                    )}
                   ></div>
                 )}
                 <div className="flex flex-col space-y-1 items-start">
@@ -228,7 +250,7 @@ function AccountsPage() {
                 </div>
               </div>
               <div className="flex flex-col space-y-1 items-end">
-                {account.type === "usdc_centric" && (
+                {account.type === "usdc-centric" && (
                   <div className="bg-[#21E9B7]/60 rounded-md p-1">
                     <p className="leading-none font-semibold text-xs">
                       USDC-centric
