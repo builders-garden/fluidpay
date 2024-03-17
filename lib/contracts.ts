@@ -19,7 +19,7 @@ import {
   USDC_TOKEN_ADDRESS,
   getBridgeTransaction,
 } from "./lifi";
-import { getSmartAccountClient } from "./smart-accounts";
+import { getSmartAccount, getSmartAccountClient } from "./smart-accounts";
 
 export const deployFluidKeyStealthAddress = async (
   address: `0x${string}`,
@@ -152,10 +152,12 @@ export const crossChainDepositOnGnosisPay = async (
   receiver: string,
   walletClient: any
 ) => {
+  const safeSmartAccount = await getSmartAccount(walletClient, publicClient);
+  console.log(safeSmartAccount.address);
   const lifiRes = await getBridgeTransaction(
     amount,
     receiver,
-    walletClient?.account!.address
+    safeSmartAccount.address
   );
   const safeSmartAccountClient = await getSmartAccountClient(
     walletClient,
