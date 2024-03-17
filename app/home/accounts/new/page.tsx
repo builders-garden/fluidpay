@@ -1,6 +1,7 @@
 "use client";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
 import { getEOA, predictStealthAddress } from "@/lib/eoa";
+import { getGnosisPayModules } from "@/lib/gnosis-pay-delay-module";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
@@ -48,6 +49,7 @@ function CreateAccountPage() {
   const [gnosisPayAddress, setGnosisPayAddress] = useState<string>("");
   const { user } = useDynamicContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const jwt = getAuthToken();
@@ -76,6 +78,33 @@ function CreateAccountPage() {
     },
   });
   console.log(stealthAddressCreated);
+
+  const linkGnosisPayCard = async () => {
+    try {
+      const { delayMod } = await getGnosisPayModules(gnosisPayAddress);
+      if (!delayMod) {
+        console.error("Gnosis Pay delay module not found");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      setError("This is not a Gnosis Pay address");
+      return;
+    }
+    await fetch(`/api/accounts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        address: gnosisPayAddress,
+        name: accountName,
+        type: accountType,
+      }),
+    });
+    router.push("/home/accounts");
+  };
 
   const createAccount = async (signature: string) => {
     try {
@@ -304,9 +333,9 @@ function CreateAccountPage() {
             value={gnosisPayAddress}
             onValueChange={(val) => setGnosisPayAddress(val.toLowerCase())}
             isClearable
-            maxLength={20}
             label="Gnosis Pay address"
             placeholder="0x1234..."
+            errorMessage={error}
           />
         )}
       </div>
@@ -318,9 +347,14 @@ function CreateAccountPage() {
         radius="full"
         isLoading={loading}
         onPress={() =>
-          signMessage({
-            message: fluidkeyMessage(walletClient?.account.address!, "1234"),
-          })
+          accountType === "gnosis_pay"
+            ? linkGnosisPayCard()
+            : signMessage({
+                message: fluidkeyMessage(
+                  walletClient?.account.address!,
+                  "1234"
+                ),
+              })
         }
       >
         {accountType === "gnosis_pay" ? "Connect Gnosis Pay" : "Create"}

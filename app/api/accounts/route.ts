@@ -1,10 +1,13 @@
 import { fetchUSDCTokenBalances } from "@/lib/airstack";
 import { getUserAccounts, upsertAccount } from "@/lib/db/accounts";
-import { Account } from "@/lib/db/interfaces";
+import { Account, AccountType } from "@/lib/db/interfaces";
 import { upsertRecord } from "@/lib/db/records";
-import { getWalletBalance } from "@/lib/lifi";
+import { EURE_TOKEN_ADDRESS, getWalletBalance } from "@/lib/lifi";
+import { formatBigInt } from "@/lib/utils";
 import { NextResponse, NextRequest } from "next/server";
 import slugify from "slugify";
+import { createPublicClient, http } from "viem";
+import { gnosis } from "viem/chains";
 import { normalize } from "viem/ens";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
@@ -30,16 +33,18 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     owner_username: username!,
   });
 
-  // save ens subdomain record
-  await upsertRecord({
-    owner: username!,
-    name: `${slug}.${username}.fluidpay.eth`,
-    contenthash: "",
-    texts: "",
-    addresses: {
-      60: address as `0x${string}`,
-    },
-  });
+  if (type !== AccountType.GNOSIS_PAY) {
+    // save ens subdomain record
+    await upsertRecord({
+      owner: username!,
+      name: `${slug}.${username}.fluidpay.eth`,
+      contenthash: "",
+      texts: "",
+      addresses: {
+        60: address as `0x${string}`,
+      },
+    });
+  }
   return NextResponse.json(newAccount);
 };
 
@@ -54,13 +59,51 @@ export const enrichAccountsWithBalances = async (accounts: Account[]) => {
   const tokenBalances = await fetchUSDCTokenBalances(
     accounts.map((a) => a.address)
   );
-  return accounts.map((a) => ({
-    balance: tokenBalances
-      ? tokenBalances?.find(
-          (b) =>
-            b.owner?.addresses![0].toLowerCase() === a.address.toLowerCase()
-        )?.formattedAmount
-      : "0",
-    ...a,
-  }));
+
+  const gnosisPayAccount = accounts.find(
+    (a) => a.type === AccountType.GNOSIS_PAY
+  );
+
+  let gnosisPayAccountBalance = "0";
+  if (gnosisPayAccount) {
+    const gnosisPublicClient = createPublicClient({
+      chain: gnosis,
+      transport: http(),
+    });
+    const result = await gnosisPublicClient.readContract({
+      address: EURE_TOKEN_ADDRESS,
+      functionName: "balanceOf",
+      abi: [
+        {
+          inputs: [
+            { internalType: "address", name: "account", type: "address" },
+          ],
+          name: "balanceOf",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      args: [gnosisPayAccount.address as `0x${string}`],
+    });
+    gnosisPayAccountBalance = formatBigInt(result, 18);
+  }
+
+  return accounts.map((a) => {
+    if (a.type === AccountType.GNOSIS_PAY) {
+      return {
+        balance: gnosisPayAccountBalance,
+        ...a,
+      };
+    }
+    return {
+      balance: tokenBalances
+        ? tokenBalances?.find(
+            (b) =>
+              b.owner?.addresses![0].toLowerCase() === a.address.toLowerCase()
+          )?.formattedAmount
+        : "0",
+      ...a,
+    };
+  });
 };
