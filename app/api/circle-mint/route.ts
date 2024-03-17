@@ -1,7 +1,7 @@
 // api/circle-wallet/route.ts
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import forge from "node-forge";
 import { numberToBytes } from "viem";
@@ -15,10 +15,10 @@ const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
   entitySecret: circleSecret!,
 });
 
-export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
+export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
     // Extract input parameters from request body
-    const { addressReceiver, tokenId } = req.body;
+    const { addressReceiver, tokenId } = await req.json();
 
     const voidBytes = numberToBytes(0);
     //call the mint function on the ERC1155 NFT contract
