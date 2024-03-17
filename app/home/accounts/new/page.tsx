@@ -21,7 +21,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { keccak256, toHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { usePublicClient, useSignMessage, useWalletClient } from "wagmi";
+import {
+  useAccount,
+  usePublicClient,
+  useSignMessage,
+  useWalletClient,
+} from "wagmi";
 
 const fluidkeyMessage = (address: `0x${string}`, secret: string) => {
   const nonce = keccak256(toHex(address + secret)).replace("0x", "");
@@ -38,6 +43,7 @@ function CreateAccountPage() {
   const [accountType, setAccountType] = useState<
     "" | "standard" | "usdc_centric" | "save_and_earn" | "gnosis_pay"
   >("");
+  const { address } = useAccount();
   const [accountName, setAccountName] = useState<string>("");
   const [gnosisPayAddress, setGnosisPayAddress] = useState<string>("");
   const { user } = useDynamicContext();
@@ -129,7 +135,7 @@ function CreateAccountPage() {
           stealthSafeAddressWithBytecode
         );
 
-        await deployFluidKeyStealthAddress(EOA, smartAccountClient);
+        await deployFluidKeyStealthAddress(address!, smartAccountClient);
 
         await fetch(`/api/accounts`, {
           method: "POST",

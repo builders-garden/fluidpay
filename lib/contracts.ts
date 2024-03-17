@@ -1,4 +1,4 @@
-import { PrivateKeyAccount, getContract, padHex } from "viem";
+import { getContract, padHex } from "viem";
 
 import { FLUIDKEY_HYDRATOR_ABI } from "./abi";
 import { publicClient } from "./config";
@@ -7,10 +7,10 @@ import { waitForTransactionReceipt } from "viem/actions";
 const FLUIDKEY_HYDRATOR_ADDRESS = `0x1a93629bfcc6e9c7241e587094fae26f62503fad`;
 
 export const deployFluidKeyStealthAddress = async (
-  EOA: PrivateKeyAccount,
+  address: `0x${string}`,
   smartAccountClient: any
 ) => {
-  const encodedAddress = padHex(EOA.address, { dir: "right", size: 32 });
+  const encodedAddress = padHex(address, { dir: "right", size: 32 });
 
   // @ts-ignore
   const hydratorContract = getContract({

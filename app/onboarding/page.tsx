@@ -5,7 +5,6 @@ import {
   useAuthenticate,
   useFluidkeyClient,
   useGenerateKeys,
-  useGetUser,
   useGetUserSmartAccounts,
   useInitializedWalletAddress,
   useIsAddressRegistered,
@@ -26,8 +25,6 @@ import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
 import { AccountType } from "@/lib/db/interfaces";
 import { getEOA, predictStealthAddress } from "@/lib/eoa";
-import { supabase } from "@/lib/supabase";
-import { getUserAccounts } from "@/lib/db/accounts";
 
 export default function Onboarding() {
   const { disconnect } = useDisconnect();
@@ -138,7 +135,7 @@ export default function Onboarding() {
         publicClient
       );
 
-      await deployFluidKeyStealthAddress(EOA, smartAccountClient);
+      await deployFluidKeyStealthAddress(address!, smartAccountClient);
 
       await setUsername(smartAccountList![0]!.idSmartAccount, user?.username!);
 
