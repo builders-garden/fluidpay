@@ -1,8 +1,8 @@
-import { createPublicClient, createWalletClient, http } from "viem";
+import { createPublicClient, getAddress, http } from "viem";
 import { gnosis } from "viem/chains";
 
 import { SAFE_ABI } from "./abi-safe";
-import { isDelayModule, isRolesModule } from "./gnosis-pay.js";
+import { isDelayModule, isRolesModule } from "./gnosis-pay";
 
 const publicClient = createPublicClient({
   chain: gnosis,
@@ -12,18 +12,17 @@ const publicClient = createPublicClient({
 export async function getGnosisPayModules(address: string) {
   const SENTINEL_ADDRESS = "0x0000000000000000000000000000000000000001";
 
-
-  let moduleAddresses = await publicClient.readContract({
+  let [moduleAddresses] = (await publicClient.readContract({
     abi: SAFE_ABI,
-    address: `0x${address}`,
+    address: getAddress(address),
     functionName: "getModulesPaginated",
     args: [SENTINEL_ADDRESS, 10],
-  }) as string[];
+  })) as unknown as string[][];
   const modules = await Promise.all(
-    moduleAddresses.map(async (address) => ({
-      address: `0x${address}`,
+    moduleAddresses.map(async (address: string) => ({
+      address,
       bytecode: await publicClient.getBytecode({
-        address: `0x${address}`,
+        address: address as `0x${string}`,
       }),
     }))
   );

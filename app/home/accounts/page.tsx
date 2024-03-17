@@ -38,7 +38,6 @@ function AccountsPage() {
   });
   const [accounts, setAccounts] = useState<any[]>([]);
   const jwt = getAuthToken();
-  console.log("JWT", jwt);
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);

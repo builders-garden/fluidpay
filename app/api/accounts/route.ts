@@ -1,14 +1,22 @@
+import { abiErc20 } from "@/lib/abi-erc20";
 import { fetchUSDCTokenBalances } from "@/lib/airstack";
 import { publicClient } from "@/lib/config";
 import { getUserAccounts, upsertAccount } from "@/lib/db/accounts";
-import { Account } from "@/lib/db/interfaces";
+import { Account, AccountType } from "@/lib/db/interfaces";
 import { upsertRecord } from "@/lib/db/records";
+import { EURE_TOKEN_ADDRESS } from "@/lib/lifi";
 import { SINGLETON_ABI, SINGLETON_ADDRESS } from "@/lib/safe";
+import { formatBigInt } from "@/lib/utils";
 import { NextResponse, NextRequest } from "next/server";
 import slugify from "slugify";
-import { createWalletClient, getContract, http } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  getContract,
+  http,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { base } from "viem/chains";
+import { base, gnosis } from "viem/chains";
 import { normalize } from "viem/ens";
 
 export const maxDuration = 300;
@@ -37,15 +45,18 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   });
 
   // save ens subdomain record
-  await upsertRecord({
-    owner: username!,
-    name: `${slug}.${username}.fluidpay.eth`,
-    contenthash: "",
-    texts: "",
-    addresses: {
-      60: address as `0x${string}`,
-    },
-  });
+  if (type !== AccountType.GNOSIS_PAY) {
+    // save ens subdomain record
+    await upsertRecord({
+      owner: username!,
+      name: `${slug}.${username}.fluidpay.eth`,
+      contenthash: "",
+      texts: "",
+      addresses: {
+        60: address as `0x${string}`,
+      },
+    });
+  }
 
   const wallet = privateKeyToAccount(
     process.env.SAFE_PRIVATE_KEY! as `0x${string}`
@@ -87,13 +98,41 @@ export const enrichAccountsWithBalances = async (accounts: Account[]) => {
   const tokenBalances = await fetchUSDCTokenBalances(
     accounts.map((a) => a.address)
   );
-  return accounts.map((a) => ({
-    balance: tokenBalances
-      ? tokenBalances?.find(
-          (b) =>
-            b.owner?.addresses![0].toLowerCase() === a.address.toLowerCase()
-        )?.formattedAmount
-      : "0",
-    ...a,
-  }));
+
+  const gnosisPayAccount = accounts.find(
+    (a) => a.type === AccountType.GNOSIS_PAY
+  );
+
+  let gnosisPayAccountBalance = "0";
+  if (gnosisPayAccount) {
+    const gnosisPublicClient = createPublicClient({
+      chain: gnosis,
+      transport: http(),
+    });
+    const result = await gnosisPublicClient.readContract({
+      address: EURE_TOKEN_ADDRESS,
+      functionName: "balanceOf",
+      abi: abiErc20,
+      args: [gnosisPayAccount.address as `0x${string}`],
+    });
+    gnosisPayAccountBalance = formatBigInt(result as any, 18);
+  }
+
+  return accounts.map((a) => {
+    if (a.type === AccountType.GNOSIS_PAY) {
+      return {
+        balance: gnosisPayAccountBalance,
+        ...a,
+      };
+    }
+    return {
+      balance: tokenBalances
+        ? tokenBalances?.find(
+            (b) =>
+              b.owner?.addresses![0].toLowerCase() === a.address.toLowerCase()
+          )?.formattedAmount
+        : "0",
+      ...a,
+    };
+  });
 };

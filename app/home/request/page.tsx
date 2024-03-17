@@ -100,7 +100,8 @@ function RequestPage() {
                       <p className="leading-none font-semibold">
                         {account.name}
                       </p>
-                      <p className="text-[#8F8F91] leading-none font-medium">
+                      <p className="text-[#8F8F91] leading-none font-medium text-xs">
+                        {account.slug}.{user?.username}.fluidpay.eth •{" "}
                         {formatAddress(account.address)}
                       </p>
                     </div>
