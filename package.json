@@ -6,9 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "npx graphql-codegen",
+    "prestart": "yarn generate",
+    "predev": "yarn generate"
   },
   "dependencies": {
+    "@airstack/node": "^0.0.5",
     "@circle-fin/circle-sdk": "^2.8.0",
     "@circle-fin/developer-controlled-wallets": "^2.0.0",
     "@circle-fin/smart-contract-platform": "^2.0.0",
@@ -17,6 +21,7 @@
     "@dynamic-labs/sdk-react-core": "^2.0.0-alpha.10",
     "@dynamic-labs/wagmi-connector": "^2.0.0-alpha.10",
     "@fluidkey/stealth-account-kit": "^0.0.30",
+    "@lifi/sdk": "^2.5.0",
     "@nextui-org/react": "^2.2.10",
     "@noble/secp256k1": "^2.0.0",
     "@sefu/react-sdk": "^0.2.31",
@@ -44,6 +49,10 @@
     "wagmi": "^2.5.7"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.6",
+    "@graphql-codegen/typescript-operations": "^4.2.0",
+    "@parcel/watcher": "^2.4.1",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/node-forge": "^1.3.11",

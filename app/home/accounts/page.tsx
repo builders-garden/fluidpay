@@ -85,7 +85,9 @@ function AccountsPage() {
                     />
                   </div>
                 </div>
-                <p className="text-white font-medium">$50,00</p>
+                <p className="text-white font-medium">
+                  ${parseFloat(selectedCard.balance).toFixed(2)}
+                </p>
               </div>
               <div className="flex flex-row items-end justify-between">
                 {!showDetails && (
@@ -247,7 +249,7 @@ function AccountsPage() {
                   </div>
                 )}
                 <p className="text-[#8F8F91] leading-none font-medium">
-                  $50,00
+                  ${parseFloat(account.balance).toFixed(2)}
                 </p>
               </div>
             </Button>

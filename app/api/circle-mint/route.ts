@@ -28,7 +28,7 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
         contractAddress: contractAddress,
         abiFunctionSignature: "safeMint(address, uint256, uint256, bytes)",
         // bytes param
-        abiParameters: [addressReceiver, tokenId, 1, voidBytes],
+        abiParameters: [addressReceiver, tokenId, 1, "0x"],
         fee: {
           type: "level",
           config: {

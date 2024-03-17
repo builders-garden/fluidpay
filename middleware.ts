@@ -12,8 +12,8 @@ export async function middleware(req: NextRequest) {
   const authToken = req.headers.get("Authorization");
 
   if (!authToken) {
-    return new Response(
-      JSON.stringify({ success: false, message: "Missing header" }),
+    return NextResponse.json(
+      { success: false, message: "Missing auth token" },
       {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -31,8 +31,8 @@ export async function middleware(req: NextRequest) {
 
     if (!isAuthenticated) {
       // Respond with JSON indicating an error message
-      return new Response(
-        JSON.stringify({ success: false, message: "Authentication failed" }),
+      return NextResponse.json(
+        { success: false, message: "Authentication failed" },
         {
           status: 401,
           headers: { "Content-Type": "application/json" },
