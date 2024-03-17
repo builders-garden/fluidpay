@@ -25,7 +25,6 @@ function SendPage() {
       },
     });
     const usersRes = await res.json();
-    console.log(usersRes);
     setUsers(usersRes);
   };
 

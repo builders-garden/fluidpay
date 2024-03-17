@@ -30,6 +30,11 @@ export default function Home() {
   const { smartAccountList } = useGetUserSmartAccounts();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
+  const { generateNewStealthAddress, stealthAddressCreated } =
+    useGenerateStealthAddress({
+      chainId: base.id,
+      idSmartAccount: mainAccount?.idSmartAccount || "",
+    });
   const { data: balanceData } = useGetSmartAccountBalance({
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
