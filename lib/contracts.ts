@@ -8,7 +8,7 @@ const FLUIDKEY_HYDRATOR_ADDRESS = `0x1a93629bfcc6e9c7241e587094fae26f62503fad`;
 
 export const deployFluidKeyStealthAddress = async (
   EOA: PrivateKeyAccount,
-  smartAccountClient: any,
+  smartAccountClient: any
 ) => {
   const encodedAddress = padHex(EOA.address, { dir: "right", size: 32 });
 
@@ -27,5 +27,9 @@ export const deployFluidKeyStealthAddress = async (
     encodedAddress,
   ] as readonly unknown[]);
 
-  await waitForTransactionReceipt(publicClient, { hash: txHash });
+  const receipt = await waitForTransactionReceipt(publicClient, {
+    hash: txHash,
+  });
+
+  console.log(receipt.logs);
 };

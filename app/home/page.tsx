@@ -9,8 +9,10 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import {
+  useGenerateStealthAddress,
   useGetSmartAccountBalance,
   useGetSmartAccountTransfers,
+  useGetUser,
   useGetUserSmartAccounts,
   useResetClient,
 } from "@sefu/react-sdk";
@@ -20,15 +22,24 @@ import { base } from "viem/chains";
 import { useDisconnect } from "wagmi";
 import { formatBigInt } from "@/lib/utils";
 import Transfers from "@/components/transfers";
+import { useEffect } from "react";
 
 export default function Home() {
   const { user } = useDynamicContext();
+  const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const { disconnect } = useDisconnect();
   const router = useRouter();
-
+  console.log("DYNAMIC USER", user);
+  console.log("FKEY USER", fkeyUser);
   const { smartAccountList } = useGetUserSmartAccounts();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
+  const { generateNewStealthAddress, stealthAddressCreated } =
+    useGenerateStealthAddress({
+      chainId: 8453,
+      idSmartAccount: mainAccount?.idSmartAccount || "",
+    });
+  console.log(stealthAddressCreated);
   const { data: balanceData } = useGetSmartAccountBalance({
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
@@ -47,6 +58,10 @@ export default function Home() {
     disconnect();
     router.push("/");
   };
+
+  useEffect(() => {
+    if (user && fkeyUser) generateNewStealthAddress();
+  }, [user, fkeyUser]);
 
   return (
     <>

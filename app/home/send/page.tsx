@@ -1,8 +1,8 @@
 "use client";
 
 import { getAuthToken } from "@dynamic-labs/sdk-react-core";
-import { Button, Input } from "@nextui-org/react";
-import { ArrowLeft, Search } from "lucide-react";
+import { Avatar, Button, Input } from "@nextui-org/react";
+import { ArrowLeft, ChevronRight, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -50,6 +50,22 @@ function SendPage() {
           value={username}
           onValueChange={(val) => setUsername(val)}
         />
+      </div>
+      {users.length === 0 && username.length > 0 && <p>No users found!</p>}
+      <div className="flex flex-col space-y-1">
+        {users.map((user) => (
+          <div
+            className="flex flex-row space-x-4 items-center justify-between cursor-pointer hover:bg-white/10 rounded-lg p-2 group"
+            key={user.id}
+            onClick={() => router.push(`/pay/${user.username}`)}
+          >
+            <div className="flex flex-row space-x-2 items-center">
+              <Avatar name={user.username.substring(0, 1).toUpperCase()} />
+              <p className="font-semibold">{user.username}</p>
+            </div>
+            <ChevronRight size={12} className="text-white/40" />
+          </div>
+        ))}
       </div>
     </div>
   );

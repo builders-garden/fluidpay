@@ -227,7 +227,7 @@ function AccountsPage() {
                 </div>
               </div>
               <div className="flex flex-col space-y-1 items-end">
-                {account.type === "usdc-centric" && (
+                {account.type === "usdc_centric" && (
                   <div className="bg-[#21E9B7]/60 rounded-md p-1">
                     <p className="leading-none font-semibold text-xs">
                       USDC-centric

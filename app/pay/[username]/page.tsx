@@ -6,6 +6,7 @@ import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 export default function PayUsername({
@@ -13,6 +14,7 @@ export default function PayUsername({
 }: {
   params: { username: string };
 }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const predefinedAmount = searchParams.get("amount");
@@ -42,22 +44,21 @@ export default function PayUsername({
   const username = `${params.username}.fkeydev.eth`;
 
   return (
-    <div className="flex flex-col py-8 space-y-4 px-8">
-      {from && (
-        <div className="flex flex-row">
-          <Button
-            variant="light"
-            className="w-min"
-            radius="full"
-            isIconOnly
-            onPress={() => {
-              router.back();
-            }}
-          >
-            <ArrowLeft />
-          </Button>
-        </div>
-      )}
+    <div className="flex flex-col py-0 space-y-4 px-4">
+      <div className="flex flex-row">
+        <Button
+          variant="light"
+          className="w-min"
+          radius="full"
+          isIconOnly
+          onPress={() => {
+            // TODO: uncomment
+            router.back();
+          }}
+        >
+          <ArrowLeft />
+        </Button>
+      </div>
       <div className="flex flex-col justify-center items-center text-center space-y-8">
         <h1 className="text-4xl font-semibold">Send to {params.username}</h1>
         <div className="flex flex-col space-y-2 justify-center items-center ">
