@@ -99,9 +99,9 @@ function AccountsPage() {
   const depositOnGnosisPay = async () => {
     setLoading(true);
     try {
-      console.log("Transfering USDC to Safe Smart Account")
-      await transferToSafeSmartAccount();
-      console.log("Depositing to Gnosis Pay")
+      console.log("Transfering USDC to Safe Smart Account");
+      // await transferToSafeSmartAccount();
+      console.log("Depositing to Gnosis Pay");
       await crossChainDepositOnGnosisPay(
         depositAmount,
         selectedCard.address,
