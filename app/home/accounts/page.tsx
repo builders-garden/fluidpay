@@ -213,7 +213,7 @@ function AccountsPage() {
         privacy.
       </p>
       {accounts.length > 0 && (
-        <div className="bg-[#D9D9D9] bg-opacity-10 rounded-lg flex flex-col space-y-4 p-2">
+        <div className="bg-[#D9D9D9] bg-opacity-10 rounded-lg flex flex-col space-y-4 p-2 max-h-[400px] overflow-y-scroll">
           {accounts.map((account, index) => (
             <Button
               className="flex flex-row items-center justify-between p-4 py-6"

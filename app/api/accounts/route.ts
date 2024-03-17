@@ -16,6 +16,7 @@ import {
   http,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
+import { waitForTransactionReceipt } from "viem/actions";
 import { base, gnosis } from "viem/chains";
 import { normalize } from "viem/ens";
 
@@ -65,6 +66,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const client = createWalletClient({
     chain: base,
     transport: http(),
+    account: wallet,
   });
 
   const singletonContract = getContract({
@@ -77,11 +79,21 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   });
 
   if (type === "usdc_centric") {
-    await singletonContract.write.registerSwapService(address);
+    const hash = await singletonContract.write.registerSwapService([address]);
+    console.log(`HASH: ${hash}`);
+    await waitForTransactionReceipt(publicClient, {
+      hash,
+    });
   }
 
   if (type === "save_and_earn") {
-    await singletonContract.write.registerDepositService(address);
+    const hash = await singletonContract.write.registerDepositService([
+      address,
+    ]);
+    console.log(`HASH: ${hash}`);
+    await waitForTransactionReceipt(publicClient, {
+      hash,
+    });
   }
 
   return NextResponse.json(newAccount);

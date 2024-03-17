@@ -113,27 +113,27 @@ export const deployFluidKeyStealthAddress = async (
     });
     if (isUSDCCentric || isSaveAndEarn) {
       // @ts-ignore
-      const hash = await safeContract.write.enableModule(SINGLETON_ADDRESS);
+      const hash = await safeContract.write.enableModule([SINGLETON_ADDRESS]);
 
       await waitForTransactionReceipt(publicClient, { hash });
     }
 
     if (isUSDCCentric) {
       // @ts-ignore
-      const approveHash = await usdcContract.write.approve(
+      const approveHash = await usdcContract.write.approve([
         "0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb", // PancakeSwap
-        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-      );
+        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      ]);
 
       await waitForTransactionReceipt(publicClient, { hash: approveHash });
     }
 
     if (isSaveAndEarn) {
       // @ts-ignore
-      const approveHash = await usdcContract.write.approve(
+      const approveHash = await usdcContract.write.approve([
         "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", // AAVE
-        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-      );
+        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      ]);
 
       await waitForTransactionReceipt(publicClient, { hash: approveHash });
     }

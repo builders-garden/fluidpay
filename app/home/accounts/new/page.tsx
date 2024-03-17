@@ -1,5 +1,6 @@
 "use client";
 import { deployFluidKeyStealthAddress } from "@/lib/contracts";
+import { getGnosisPayModules } from "@/lib/gnosis-pay-delay-module";
 import { getSmartAccountClient } from "@/lib/smart-accounts";
 import { getAuthToken, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Input } from "@nextui-org/react";
@@ -49,63 +50,42 @@ function CreateAccountPage() {
       idSmartAccount: mainAccount?.idSmartAccount || "",
     });
 
+  const linkGnosisPayCard = async () => {
+    try {
+      const { delayMod } = await getGnosisPayModules(gnosisPayAddress);
+      if (!delayMod) {
+        console.error("Gnosis Pay delay module not found");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      setError("This is not a Gnosis Pay address");
+      return;
+    }
+    await fetch(`/api/accounts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        address: gnosisPayAddress,
+        name: accountName,
+        type: accountType,
+      }),
+    });
+    router.push("/home/accounts");
+  };
+
   const createAccount = async () => {
     try {
       setLoading(true);
 
       if (accountType !== "gnosis_pay") {
-        // const randomNonce =
-        //   Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) +
-        //   1000000000;
-        // const EOA = getEOA(fluidkeyClient!, randomNonce);
-        // console.log(`EOA ADDRESS: ${EOA.address}`);
-        // const stealthAddress = predictStealthAddress(
-        //   fluidkeyClient!,
-        //   randomNonce
-        // );
-        // console.log(`STEALTH ADDRESS: ${stealthAddress}`);
-
-        // const generatedAddress = await generateNewStealthAddress();
-        // console.log(`HOOK GENERATION: ${generatedAddress?.address}`);
         const smartAccountClient = await getSmartAccountClient(
           walletClient,
           publicClient
         );
-
-        // const { spendingPrivateKey, viewingPrivateKey } =
-        //   generateKeysFromSignature(signature as `0x${string}`);
-
-        // const privateViewingKeyNode = extractViewingPrivateKeyNode(
-        //   viewingPrivateKey,
-        //   0
-        // );
-        // const spendingAccount = privateKeyToAccount(spendingPrivateKey);
-        // const spendingPublicKey = spendingAccount.publicKey;
-
-        // const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
-        //   viewingPrivateKeyNode: privateViewingKeyNode,
-        //   nonce: BigInt(randomNonce),
-        //   chainId: 8453,
-        // });
-
-        // const { stealthAddresses } = generateStealthAddresses({
-        //   spendingPublicKeys: [spendingPublicKey],
-        //   ephemeralPrivateKey,
-        // });
-
-        // const { stealthSafeAddress: stealthSafeAddressWithBytecode } =
-        //   predictStealthSafeAddressWithBytecode({
-        //     threshold: 1,
-        //     stealthAddresses,
-        //     safeVersion: "1.3.0",
-        //     safeProxyBytecode:
-        //       "0x608060405234801561001057600080fd5b506040516101e63803806101e68339818101604052602081101561003357600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100ca576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260228152602001806101c46022913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505060ab806101196000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e0000000000000000000000000000000000000000000000000000000060003514156050578060005260206000f35b3660008037600080366000845af43d6000803e60008114156070573d6000fd5b3d6000f3fea2646970667358221220d1429297349653a4918076d650332de1a1068c5f3e07c5c82360c277770b955264736f6c63430007060033496e76616c69642073696e676c65746f6e20616464726573732070726f7669646564",
-        //     useDefaultAddress: true,
-        //   });
-        // console.log(
-        //   "stealthSafeAddressWithBytecode",
-        //   stealthSafeAddressWithBytecode
-        // );
 
         const result = await deployFluidKeyStealthAddress(
           address!,
