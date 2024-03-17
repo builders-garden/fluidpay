@@ -21,7 +21,6 @@
     "@dynamic-labs/sdk-react-core": "^2.0.0-alpha.10",
     "@dynamic-labs/wagmi-connector": "^2.0.0-alpha.10",
     "@fluidkey/stealth-account-kit": "^0.0.30",
-    "@lifi/sdk": "^2.5.0",
     "@nextui-org/react": "^2.2.10",
     "@noble/secp256k1": "^2.0.0",
     "@sefu/react-sdk": "^0.2.31",

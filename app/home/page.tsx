@@ -29,17 +29,14 @@ export default function Home() {
   const { user: fkeyUser } = useGetUser({ pollingOnStatusImporting: false });
   const { disconnect } = useDisconnect();
   const router = useRouter();
-  console.log("DYNAMIC USER", user);
-  console.log("FKEY USER", fkeyUser);
   const { smartAccountList } = useGetUserSmartAccounts();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
   const { generateNewStealthAddress, stealthAddressCreated } =
     useGenerateStealthAddress({
-      chainId: 8453,
+      chainId: base.id,
       idSmartAccount: mainAccount?.idSmartAccount || "",
     });
-  console.log(stealthAddressCreated);
   const { data: balanceData } = useGetSmartAccountBalance({
     idSmartAccount: mainAccount?.idSmartAccount || "",
     chainId: base.id,
@@ -58,6 +55,8 @@ export default function Home() {
     disconnect();
     router.push("/");
   };
+
+  console.log(data);
 
   useEffect(() => {
     if (user && fkeyUser) generateNewStealthAddress();

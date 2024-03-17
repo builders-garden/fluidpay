@@ -3,18 +3,21 @@
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import { base, mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import {
+  useConfirmTransferOut,
+  useGenerateTransferOutQuote,
+  useGetUserSmartAccounts,
+} from "@sefu/react-sdk";
 
 export default function PayUsername({
   params,
 }: {
   params: { username: string };
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const predefinedAmount = searchParams.get("amount");
@@ -23,6 +26,26 @@ export default function PayUsername({
     predefinedAmount ? parseFloat(predefinedAmount) : null
   );
   const router = useRouter();
+  const { data: transferQuote, requestQuote } = useGenerateTransferOutQuote();
+  const { confirmTransferOut } = useConfirmTransferOut();
+  const { smartAccountList } = useGetUserSmartAccounts();
+  const mainAccount =
+    smartAccountList !== undefined ? smartAccountList[0] : null;
+
+  const transfer = async () => {
+    const quote = await requestQuote({
+      amount: BigInt(amount!) * BigInt(10 ** 6),
+      to: address!,
+      idSmartAccount: mainAccount?.idSmartAccount || "",
+      chainId: base.id,
+      idToken: process.env.NEXT_PUBLIC_USDC_TOKEN_ID!,
+      epochControlStructure: 0,
+    });
+
+    const confirmedQuote = await confirmTransferOut({
+      idWithdrawalProcedure: quote?.withdrawalProcedure?.idWithdrawalProcedure!,
+    });
+  };
 
   useEffect(() => {
     async function resolveAddress() {
@@ -52,7 +75,6 @@ export default function PayUsername({
           radius="full"
           isIconOnly
           onPress={() => {
-            // TODO: uncomment
             router.back();
           }}
         >
@@ -83,7 +105,9 @@ export default function PayUsername({
           radius="full"
           size="lg"
           className="w-full font-semibold"
-          onPress={() => console.log("send")}
+          onPress={() => {
+            transfer();
+          }}
         >
           Send
         </Button>
