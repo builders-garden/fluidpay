@@ -7,15 +7,16 @@ import { FluidkeyClient } from "@sefu/react-sdk";
 import { privateKeyToAccount } from "viem/accounts";
 import * as secp from "@noble/secp256k1";
 import { base } from "viem/chains";
+import "@/app/polyfills";
 
 export const getEphemeralPrivateKey = (
   fluidkeyClient: FluidkeyClient,
   nonce = 0
 ) => {
-  const vpkNode = fluidkeyClient?.generateViewingPrivateKeyNode(nonce);
+  const vpkNode = fluidkeyClient?.generateViewingPrivateKeyNode(0);
   const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
     viewingPrivateKeyNode: vpkNode!,
-    nonce: BigInt(0),
+    nonce: BigInt(nonce),
     chainId: base.id,
   });
   return ephemeralPrivateKey;
@@ -23,6 +24,7 @@ export const getEphemeralPrivateKey = (
 
 export const getEOA = (fluidkeyClient: FluidkeyClient, nonce = 0) => {
   const ephemeralPrivateKey = getEphemeralPrivateKey(fluidkeyClient, nonce);
+  console.log(`EPHEMERAL EOA: ${ephemeralPrivateKey}`);
   const ephemeralPubKey = secp.getPublicKey(
     Uint8Array.from(Buffer.from(ephemeralPrivateKey.slice(2), "hex"))
   );
@@ -37,12 +39,15 @@ export const predictStealthAddress = (
   nonce = 0
 ) => {
   const ephemeralPrivateKey = getEphemeralPrivateKey(fluidkeyClient, nonce);
+  console.log(`EPHEMERAL PREDICTION: ${ephemeralPrivateKey}`);
   const eoa = getEOA(fluidkeyClient, nonce);
+  console.log(`EOA PREDICT ADDRESS: ${eoa.address}`);
   // Generate the stealth owner address
   const { stealthAddresses } = generateStealthAddresses({
     spendingPublicKeys: [eoa.publicKey],
     ephemeralPrivateKey,
   });
+  console.log(`STEALTH ADDRESSES: ${stealthAddresses}`);
   const { stealthSafeAddress } = predictStealthSafeAddressWithBytecode({
     threshold: 1,
     stealthAddresses,
