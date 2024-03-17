@@ -178,7 +178,7 @@ function AccountsPage() {
               <p className="font-bold">Settings</p>
             </div>
           </div>
-          <div className="flex flex-col space-y-2 bg-[#232324] rounded-xl p-4 mx-4 mt-12">
+          <div className="flex flex-col space-y-2 bg-[#232324] rounded-xl p-4 mx-4 mt-12 max-h-[300px] overflow-y-scroll">
             <Transfers
               transfers={data.filter(
                 (transfer) =>

@@ -1,11 +1,10 @@
 "use client";
 import RewardItem, { RewardStatus } from "@/components/reward";
 import { getAuthToken } from "@dynamic-labs/sdk-react-core";
-import { Button, user } from "@nextui-org/react";
-import { ArrowLeft, X } from "lucide-react";
+import { Button } from "@nextui-org/react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { setBalance } from "viem/actions";
 import { useWalletClient } from "wagmi";
 
 export default function Rewards() {
@@ -32,7 +31,7 @@ export default function Rewards() {
   }, []);
 
   return (
-    <div className="flex flex-col p-8 bg-[#000] space-y-4">
+    <div className="flex flex-col p-4 space-y-4 bg-[#000]">
       <Button
         variant="light"
         className="w-min"

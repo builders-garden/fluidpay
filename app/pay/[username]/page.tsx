@@ -2,7 +2,7 @@
 
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, formatUnits, http } from "viem";
 import { base, mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,6 +10,7 @@ import { ArrowLeft } from "lucide-react";
 import {
   useConfirmTransferOut,
   useGenerateTransferOutQuote,
+  useGetSmartAccountBalance,
   useGetUserSmartAccounts,
 } from "@sefu/react-sdk";
 
@@ -31,6 +32,11 @@ export default function PayUsername({
   const { smartAccountList } = useGetUserSmartAccounts();
   const mainAccount =
     smartAccountList !== undefined ? smartAccountList[0] : null;
+
+  const { data: balanceData } = useGetSmartAccountBalance({
+    idSmartAccount: mainAccount?.idSmartAccount || "",
+    chainId: base.id,
+  });
 
   const transfer = async () => {
     const quote = await requestQuote({
@@ -67,7 +73,7 @@ export default function PayUsername({
   const username = `${params.username}.fkeydev.eth`;
 
   return (
-    <div className="flex flex-col py-0 space-y-4 px-4">
+    <div className="flex flex-col p-4 space-y-4">
       <div className="flex flex-row">
         <Button
           variant="light"
@@ -90,15 +96,21 @@ export default function PayUsername({
             <p className="text-gray-500">{username}</p>
           </div>
         </div>
-
-        <Input
-          value={amount?.toString()}
-          onValueChange={(val) => setAmount(parseFloat(val))}
-          isClearable
-          type="number"
-          label="Amount to send"
-          placeholder="0"
-        />
+        <div className="flex flex-col w-full items-end space-y-2">
+          <Input
+            value={amount?.toString()}
+            onValueChange={(val) => setAmount(parseFloat(val))}
+            isClearable
+            type="number"
+            label="Amount to send"
+            placeholder="0"
+          />
+          <div className="flex flex-row justify-between items-center text-xs text-[#8F8F91]">
+            <p>
+              Balance: ${Number(formatUnits(BigInt(balanceData[0].amount), 6))}
+            </p>
+          </div>
+        </div>
         <Button
           color="primary"
           variant="solid"
@@ -108,6 +120,9 @@ export default function PayUsername({
           onPress={() => {
             transfer();
           }}
+          isDisabled={
+            !amount || BigInt(balanceData[0].amount) < BigInt(amount! * 10 ** 6)
+          }
         >
           Send
         </Button>

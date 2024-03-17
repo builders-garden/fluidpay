@@ -1,5 +1,4 @@
 "use client";
-
 import { getAuthToken } from "@dynamic-labs/sdk-react-core";
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { ArrowLeft, ChevronRight, Search } from "lucide-react";
